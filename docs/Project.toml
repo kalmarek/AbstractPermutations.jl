@@ -1,0 +1,3 @@
+[deps]
+AbstractPermutations = "36d08e8a-54dd-435f-8c9e-38a475050b11"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
