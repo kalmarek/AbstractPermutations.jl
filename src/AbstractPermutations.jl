@@ -7,5 +7,6 @@ include("cycle_decomposition.jl")
 include("abstract_perm.jl")
 include("arithmetic.jl")
 include("perm_functionality.jl")
+include("parsing.jl")
 
 end

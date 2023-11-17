@@ -12,7 +12,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test isone(one(a))
             @test isone(AP.degree(a))
             @test AP.degree(a) == 1
-            @info AP.CycleDecomposition(a)
+
             @test collect(AP.cycles(a)) == [[1]]
 
             @test all(i -> i^a == i, 1:5)
@@ -128,7 +128,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test collect(AP.cycles(b * c)) == [[1, 2, 3], [4, 5]]
         end
 
-        @testset "io/show" begin
+        @testset "io/show and parsing" begin
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4])
@@ -141,6 +141,10 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test sprint(show, AP.cycles(b)) == "Cycle Decomposition: (1,2,3)"
             @test sprint(show, AP.cycles(b * c)) ==
                   "Cycle Decomposition: (1,2,3)(4,5)"
+
+            @test parse(P, "(1,3)(2,4,6)(3,5)") isa AP.AbstractPermutation
+            @test parse(P, "(1,3)(2,4,6)(3,5)") == P([5, 4, 1, 6, 3, 2])
+
         end
     end
 end
