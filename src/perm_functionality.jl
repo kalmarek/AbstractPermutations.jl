@@ -31,7 +31,7 @@ Return the sign of a permutation.
 `sign` represents the homomorphism from the permutation group to the unit group
 of `ℤ` whose kernel is the alternating group.
 """
-Base.sign(σ::AbstractPermutation) = (-1)^parity(σ)
+Base.sign(σ::AbstractPermutation) = ifelse(isone(parity(σ)), -1, 1)
 
 """
     permtype(g::AbstractPermutation)
