@@ -122,6 +122,12 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.parity(a * b) == 1
             @test AP.parity(a * b * c) == 0
 
+            @test AP.parity(AP.cycles(p)) == 0
+            @test AP.parity(AP.cycles(a)) == 1
+            @test AP.parity(AP.cycles(b)) == 0
+            @test AP.parity(AP.cycles(a * b)) == 1
+            @test AP.parity(AP.cycles(a * b * c)) == 0
+
             @test AP.order(p) == 1
             @test AP.order(a) == 2
             @test AP.order(b) == 3
