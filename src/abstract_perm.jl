@@ -15,15 +15,15 @@ For primitive ("bare-metal"/"parent-less") permutations one needs to implement
     set to `false` when the caller knows that `images` constitute a honest
     permutation.
 
-!!! Note
+!!! note
     There is no formal requirement that the `APerm(images)` constructor actually
     returns a `APerm`. Any `AbstractPermutation` object would do. This may be
     useful if constructing permutation from images is not technically feasible.
 
-!!! Note
+!!! note
     If `APerm` is not constructable from type one needs to implement `one(::APerm)`.
 
-!!! Warn
+!!! warn
     Even though `AbstractPermutation <: GroupsCore.GroupElement` they don't
     necessarily implement the whole of `GroupElement` interface, e.g. it is
     possible to implement `parent`-less permutations.
@@ -128,6 +128,10 @@ end
 
 Base.broadcastable(p::AbstractPermutation) = Ref(p)
 
+"""
+    cycles(g::AbstractPermutation)
+Return an iterator over cycles in the disjoint cycle decomposition of `g`.
+"""
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
 
 function CycleDecomposition(σ::AbstractPermutation)
