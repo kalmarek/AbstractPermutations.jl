@@ -1,13 +1,11 @@
 """
     AbstractPermutation
-Abstract type representing permutations of set `1:n`.
-
-They all embed canonically into `InfinitePermGroup()`
+Abstract type representing permutations of set `1:n` for some `n`.
 
 # Mandatory interface
 Subtypes `APerm <: AbstractPermutation` must implement the following functions:
  * `Base.:^(i::Integer, σ::APerm)` - the image of `i` under `σ`,
- * `degree(σ::APerm)` - the minimal `n` such that `k^σ == k` for all `k > n`,
+ * `degree(σ::APerm)` - the **minimal** `n` such that `k^σ == k` for all `k > n`,
 
 For primitive ("bare-metal"/"parent-less") permutations one needs to implement
  * `APerm(images::AbstractVector{<:Integer}[, check::Bool=true])` - construct a
