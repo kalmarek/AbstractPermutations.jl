@@ -1,13 +1,11 @@
 """
     AbstractPermutation
-Abstract type representing permutations of set `1:n`.
-
-They all embed canonically into `InfinitePermGroup()`
+Abstract type representing permutations of set `1:n` for some `n`.
 
 # Mandatory interface
 Subtypes `APerm <: AbstractPermutation` must implement the following functions:
  * `Base.:^(i::Integer, σ::APerm)` - the image of `i` under `σ`,
- * `degree(σ::APerm)` - the minimal `n` such that `k^σ == k` for all `k > n`,
+ * `degree(σ::APerm)` - the **minimal** `n` such that `k^σ == k` for all `k > n`,
 
 For primitive ("bare-metal"/"parent-less") permutations one needs to implement
  * `APerm(images::AbstractVector{<:Integer}[, check::Bool=true])` - construct a
@@ -45,7 +43,12 @@ regard `σ` as an element of `Sym(n)` (and not of `Sym(n-1)`).
 By convention `degree` of the trivial permutation must return `1`.
 """
 function degree(σ::AbstractPermutation)
-    throw("not implemented: `PermutationGroups.degree(::$(typeof(σ)))`")
+    throw(
+        GroupsCore.InterfaceNotImplemented(
+            :AbstractPermutation,
+            "AbstractPermutations.degree(::$(typeof(σ)))",
+        ),
+    )
 end
 
 """
@@ -56,7 +59,12 @@ We consider `σ` as a finite support permutation of `ℕ`, so by convention `k^�
 for all `k > degree(σ)`.
 """
 function Base.:^(::Integer, σ::AbstractPermutation)
-    throw("not implemented: Base.:^(::Integer, ::$(typeof(σ)))")
+    throw(
+        GroupsCore.InterfaceNotImplemented(
+            :AbstractPermutation,
+            "Base.:^(::Integer, ::$(typeof(σ)))",
+        ),
+    )
 end
 
 """
@@ -64,7 +72,7 @@ end
 Return the "bare-metal" permutation (unwrap). **For internal use only.**
 
 Access to wrapped permutation object. For "bare-metal" permutations this needs
-to return the identical (i.e. ===) object.
+to return the identical (i.e. ``===`) object.
 """
 perm(p::AbstractPermutation) = p
 
