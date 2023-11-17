@@ -1,9 +1,11 @@
 function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
     @testset "AbstractPermutation API test: $P" begin
-        @test one(P) isa AP.AbstractPermutation
-        @test isone(one(P))
-
+        @test P([1]) isa AP.AbstractPermutation
+        @test_throws ArgumentError P([2])
         @test_throws ArgumentError P([1, 2, 3, 1])
+
+        p = P([1])
+        @test one(p) isa AP.AbstractPermutation
 
         @testset "the identity permutation" begin
             a = P([1, 2, 3])
@@ -62,9 +64,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "actions on 1:n" begin
-            @test 5^one(P) == 5
-            @test UInt8(5)^one(P) isa UInt8
-
+            p = P([1])
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
@@ -74,16 +74,19 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test 2^a == 1
             @test (3:7) .^ a == 3:7
             @test (1:5) .^ b == [2, 3, 1, 4, 5]
+            @test (1:10) .^ p == 1:10
 
             # action preserves type
             @test UInt128(1)^a isa UInt128
-            @test UInt128(5)^a isa UInt128
+            @test UInt32(100)^a isa UInt32
+            @test UInt8(100)^p isa UInt8
 
             @test AP.firstmoved(a) == 1
             @test AP.firstmoved(b) == 1
             @test AP.firstmoved(c) == 4
-            @test AP.firstmoved(one(a)) === nothing
+            @test AP.firstmoved(p) === nothing
 
+            @test AP.nfixedpoints(p) == 1
             @test AP.nfixedpoints(b) == 0
             @test AP.nfixedpoints(b, 2:5) == 2
             @test AP.nfixedpoints(c) == 3
@@ -93,28 +96,33 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.fixedpoints(b, 2:5) == [4, 5]
             @test AP.fixedpoints(c) == [1, 2, 3]
             @test AP.fixedpoints(c, 2:4) == [2, 3]
+            @test AP.fixedpoints(p) == [1]
         end
 
         @testset "permutation functions" begin
+            p = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
+            @test AP.permtype(p) == Int[]
             @test AP.permtype(a) == [2]
             @test AP.permtype(b) == [3]
             @test AP.permtype(b * c) == [3, 2]
-            @test AP.permtype(one(a)) == Int[]
 
+            @test sign(p) == 1
             @test sign(a) == -1
             @test sign(b) == 1
             @test sign(c) == -1
             @test sign(a * b) == -1
             @test sign(a * b * c) == 1
 
+            @test AP.parity(p) == 0
             @test AP.parity(a) == 1
             @test AP.parity(b) == 0
             @test AP.parity(a * b) == 1
             @test AP.parity(a * b * c) == 0
 
+            @test AP.order(p) == 1
             @test AP.order(a) == 2
             @test AP.order(b) == 3
             @test AP.order(c) == 2
@@ -122,6 +130,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.order(a * b) == 2
             @test AP.order(a * b * c) == 2
 
+            @test collect(AP.cycles(p)) == [[1]]
             @test collect(AP.cycles(a)) == [[1, 2]]
             @test collect(AP.cycles(b)) == [[1, 2, 3]]
             @test collect(AP.cycles(a * b)) == [[1, 3], [2]]
@@ -129,10 +138,11 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "io/show and parsing" begin
+            p = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
-            c = P([1, 2, 3, 5, 4])
-            @test sprint(show, MIME"text/plain"(), one(P)) == "()"
+            c = P([1, 2, 3, 5, 4]) # (4,5)
+            @test sprint(show, MIME"text/plain"(), p) == "()"
             @test sprint(show, MIME"text/plain"(), a) == "(1,2)"
             @test sprint(show, MIME"text/plain"(), b) == "(1,2,3)"
             @test sprint(show, MIME"text/plain"(), c) == "(4,5)"
