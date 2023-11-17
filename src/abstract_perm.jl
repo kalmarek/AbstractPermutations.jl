@@ -43,7 +43,12 @@ regard `σ` as an element of `Sym(n)` (and not of `Sym(n-1)`).
 By convention `degree` of the trivial permutation must return `1`.
 """
 function degree(σ::AbstractPermutation)
-    throw("not implemented: `PermutationGroups.degree(::$(typeof(σ)))`")
+    throw(
+        GroupsCore.InterfaceNotImplemented(
+            :AbstractPermutation,
+            "AbstractPermutations.degree(::$(typeof(σ)))",
+        ),
+    )
 end
 
 """
@@ -54,7 +59,12 @@ We consider `σ` as a finite support permutation of `ℕ`, so by convention `k^�
 for all `k > degree(σ)`.
 """
 function Base.:^(::Integer, σ::AbstractPermutation)
-    throw("not implemented: Base.:^(::Integer, ::$(typeof(σ)))")
+    throw(
+        GroupsCore.InterfaceNotImplemented(
+            :AbstractPermutation,
+            "Base.:^(::Integer, ::$(typeof(σ)))",
+        ),
+    )
 end
 
 """
@@ -62,7 +72,7 @@ end
 Return the "bare-metal" permutation (unwrap). **For internal use only.**
 
 Access to wrapped permutation object. For "bare-metal" permutations this needs
-to return the identical (i.e. ===) object.
+to return the identical (i.e. ``===`) object.
 """
 perm(p::AbstractPermutation) = p
 

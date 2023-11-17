@@ -1,7 +1,7 @@
 module AbstractPermutations
 
 import GroupsCore
-import GroupsCore: GroupElement, order # only these two are extended
+import GroupsCore: GroupElement, order, InterfaceNotImplemented # only these two are extended
 
 include("cycle_decomposition.jl")
 include("abstract_perm.jl")
