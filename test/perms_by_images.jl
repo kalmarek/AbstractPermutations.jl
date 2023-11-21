@@ -26,8 +26,8 @@ end
 
 AP.degree(σ::Perm) = length(σ.images)
 
-Base.Base.@propagate_inbounds function Base.:^(n::Integer, σ::Perm)
-    return 1 ≤ n ≤ AP.degree(σ) ? oftype(n, @inbounds σ.images[n]) : n
+function Base.:^(n::Integer, σ::Perm)
+    return n in eachindex(σ.images) ? oftype(n, @inbounds σ.images[n]) : n
 end
 
 # this would be enough; for convienience we also define those
