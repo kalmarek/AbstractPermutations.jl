@@ -10,8 +10,10 @@ Subtypes `APerm <: AbstractPermutation` must implement the following functions:
   constructor of a `APerm` from a vector of images. Optionally the second
   argument `check` may be set to `false` when the caller knows that `images`
   constitute a honest permutation.
-* [`Base.:^(i::Integer, σ::APerm)`]@(ref ^(::Integer, ::AbstractPermutation)),
-* [`degree(σ::APerm)`](@ref degree)
+* [`Base.:^(i::Integer, σ::APerm)`](@ref ^(::Integer, ::AbstractPermutation))
+  the customary notation for the image of `i` under `σ`.
+* [`degree(σ::APerm)`](@ref degree) the minimal `d ≥ 1` such that `σ` fixes all
+  `k ≥ d`.
 
 !!! note
     There is no formal requirement that the `APerm(images)` constructor actually
@@ -35,12 +37,14 @@ abstract type AbstractPermutation <: GroupsCore.GroupElement end
 
 """
     degree(σ::AbstractPermutation)
-Return a minimal number `n` such that `σ(k) == k` for all `k > n`.
+Return a minimal number `n ≥ 1` such that `σ(k) == k` for all `k > n`,
 
 Such number `n` can be understood as a _degree_ of a permutation, since we can
-regard `σ` as an element of `Sym(n)` (and not of `Sym(n-1)`).
+regard `σ` as an element of `Sym(1:n)` (and not of `Sym(1:n-1)`).
 
-By convention `degree` of the trivial permutation must return `1`.
+!!! note
+    By this convention `degree` of the trivial permutation is equal to `1` and
+    it is the only permutation with this property.
 """
 function degree(σ::AbstractPermutation)
     throw(
@@ -53,10 +57,13 @@ end
 
 """
     ^(i::Integer, σ::AbstractPermutation)
-Return the image of `i` under the (permutation) action of `σ`.
+Return the image of `i` under `σ`.
 
-We consider `σ` as a finite support permutation of `ℕ`, so by convention `k^σ = k`
-for all `k > degree(σ)`.
+We consider `σ` as a permutation of `ℕ` (the positive integers), with finite
+support, so by convention `k^σ = k` for all `k > degree(σ)`.
+
+!!! warn
+    The behaviour of `i^σ` for `i ≤ 0` is undefined and can not be relied upon.
 """
 function Base.:^(::Integer, σ::AbstractPermutation)
     throw(
