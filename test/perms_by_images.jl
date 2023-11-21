@@ -7,29 +7,20 @@ function __degree(images::AbstractVector{<:Integer})
     return firstindex(images)
 end
 
-mutable struct Perm{T<:Integer} <: AP.AbstractPermutation
+struct Perm{T<:Integer} <: AP.AbstractPermutation # change to mutable for cycles
     images::Vector{T}
-    cycles::AP.CycleDecomposition{T}
-
+    # cycles::AP.CycleDecomposition{T} # to cache/compute on-demand
     function Perm{T}(
         images::AbstractVector{<:Integer},
         check::Bool = true,
     ) where {T}
-        if check && !isperm(images)
-            throw(
-                ArgumentError(
-                    "Provided images do not constitute a permutation!",
-                ),
-            )
+        Base.require_one_based_indexing(images)
+        if check && (!isperm(images) || isempty(images))
+            throw(ArgumentError("images do not constitute a permutation!"))
         end
         deg = __degree(images)
-        if deg == length(images)
-            return new{T}(images)
-        else
-            # for future: use @time one(Perm{Int})
-            # to check if julia can elide the creation of view
-            return new{T}(@view images[Base.OneTo(deg)])
-        end
+        # since we always take view Perm never takes the ownership of `images`
+        return new{T}(@view images[Base.OneTo(deg)])
     end
 end
 
