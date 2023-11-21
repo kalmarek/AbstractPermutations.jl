@@ -52,8 +52,8 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test isone(a * a)
             @test isone(b * b * b)
 
-            @test a^b == Perm([1, 3, 2]) # (1,2)^(1,2,3) == (2,3)
-            @test b^a == Perm([3, 1, 2]) # (1,2,3)^(1,2) == (1,3,2)
+            @test a^b == P([1, 3, 2]) # (1,2)^(1,2,3) == (2,3)
+            @test b^a == P([3, 1, 2]) # (1,2,3)^(1,2) == (1,3,2)
 
             @test *(b) == b
             @test b * b == b^2

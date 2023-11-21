@@ -1,4 +1,5 @@
-const AP = AbstractPermutations
+module ExamplePerms
+import AbstractPermutations as AP
 
 function __degree(images::AbstractVector{<:Integer})
     @inbounds for i in lastindex(images):-1:firstindex(images)
@@ -57,7 +58,6 @@ end
 =#
 
 # some other performance overloads that are possible
-#=
-Base.copy(σ::Perm) = Perm(copy(σ.images), false)
-
-=#
+# Base.copy(σ::Perm) = Perm(copy(σ.images), false)
+# Base.broadcastable(σ::Perm) = Ref(σ)
+end # of module Perms
