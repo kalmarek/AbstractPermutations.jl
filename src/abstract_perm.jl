@@ -1,8 +1,9 @@
 """
     AbstractPermutation
-Abstract type representing bijections of the natural numbers `ℕ = {1,2,…}`
-finitely supported. That is, for every permutation `σ` there are only finitely
-many `k` such that `k^σ ≠ k`, where `k^σ` denotes the image of `k` under map `σ`.
+Abstract type representing bijections of positive integers `ℕ = {1,2,…}`
+finitely supported. That is, we treat permutations as functions `ℕ → ℕ` such
+that for every permutation `σ` there are only finitely many `k` different from
+their image under `σ`.
 
 # Mandatory interface
 Subtypes `APerm <: AbstractPermutation` must implement the following functions:
