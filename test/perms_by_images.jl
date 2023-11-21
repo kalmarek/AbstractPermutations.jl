@@ -32,8 +32,8 @@ end
 
 # this would be enough; for convienience we also define those
 
-inttype(::Type{Perm{T}}) where {T} = T
-inttype(::Type{Perm}) = UInt16 # the default type when not specified
+AP.inttype(::Type{Perm{T}}) where {T} = T
+AP.inttype(::Type{Perm}) = UInt16 # the default type when not specified
 
 function Perm(images::AbstractVector{<:Integer}, check = true)
     return Perm{AP.inttype(Perm)}(images, check)
