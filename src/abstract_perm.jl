@@ -1,17 +1,17 @@
 """
     AbstractPermutation
-Abstract type representing permutations of set `1:n` for some `n`.
+Abstract type representing bijections of the natural numbers `ℕ = {1,2,…}`
+finitely supported. That is, for every permutation `σ` there are only finitely
+many `k` such that `k^σ ≠ k`, where `k^σ` denotes the image of `k` under map `σ`.
 
 # Mandatory interface
 Subtypes `APerm <: AbstractPermutation` must implement the following functions:
- * `Base.:^(i::Integer, σ::APerm)` - the image of `i` under `σ`,
- * `degree(σ::APerm)` - the **minimal** `n` such that `k^σ == k` for all `k > n`,
-
-For primitive ("bare-metal"/"parent-less") permutations one needs to implement
- * `APerm(images::AbstractVector{<:Integer}[, check::Bool=true])` - construct a
-   `APerm` from a vector of images. Optionally the second argument `check` may be
-    set to `false` when the caller knows that `images` constitute a honest
-    permutation.
+* `APerm(images::AbstractVector{<:Integer}[, check::Bool=true])` - a
+  constructor of a `APerm` from a vector of images. Optionally the second
+  argument `check` may be set to `false` when the caller knows that `images`
+  constitute a honest permutation.
+* [`Base.:^(i::Integer, σ::APerm)`]@(ref ^(::Integer, ::AbstractPermutation)),
+* [`degree(σ::APerm)`](@ref degree)
 
 !!! note
     There is no formal requirement that the `APerm(images)` constructor actually
@@ -27,9 +27,9 @@ For primitive ("bare-metal"/"parent-less") permutations one needs to implement
     possible to implement `parent`-less permutations.
 
 # Optional interface
- * `inttype(::Type{<:APerm}) = UInt32` - return the underlying "storage" integer,
- if that makes any sense for `APerm`.
- * `perm(σ::APerm) = σ` - return the "bare-metal" permutation (unwrap).
+* [`perm(σ::APerm)`](@ref perm) by default returns `σ` - the "simplest"
+  (implementation-wise) permutation underlying `σ`.
+* [`inttype(::Type{<:APerm})`](@ref inttype) by default returns `UInt32`.
 """
 abstract type AbstractPermutation <: GroupsCore.GroupElement end
 
@@ -69,16 +69,29 @@ end
 
 """
     perm(p::AbstractPermutation)
-Return the "bare-metal" permutation (unwrap). **For internal use only.**
+Return the "bare-metal" permutation (unwrap).
+
+!!! warn
+    **For internal use only.**
 
 Access to wrapped permutation object. For "bare-metal" permutations this needs
-to return the identical (i.e. ``===`) object.
+to return the identical (i.e. ``===`) object. The intention of ths functions
+is to provide un-wrapped permutations to computationally intensive algorithms,
+so that the external wrappers (if exist) do not hinder the performance.
 """
 perm(p::AbstractPermutation) = p
 
 """
     inttype(σ::Type{<:AbstractPermutation})
-Return the underlying "storage" integer. **For internal use only.**
+Return the underlying "storage" integer.
+
+!!! warn
+    **For internal use only.**
+
+The intension is to provide optimal storage type when the `images` vector
+constructor is used (to save allocations and memory copy).
+For example a hypothetic permutation `Perm8` of elements up to length `255`
+may alter the default to `UInt8`.
 
 The default is `UInt32`.
 """
