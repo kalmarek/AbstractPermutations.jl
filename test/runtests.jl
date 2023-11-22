@@ -10,7 +10,7 @@ include("abstract_perm_API.jl")
     @testset "incomplete implementation" begin
         struct APerm <: AP.AbstractPermutation end
 
-        p = APerm();
+        p = APerm()
         @test_throws AP.InterfaceNotImplemented AP.degree(p)
         @test_throws AP.InterfaceNotImplemented 3^p
     end
@@ -23,5 +23,4 @@ include("abstract_perm_API.jl")
         @test_throws ArgumentError parse(EP.Perm, "(1,2,3),(4,5)")
         @test_throws ArgumentError parse(EP.Perm, "(1,2,3),(4 5)")
     end
-
 end

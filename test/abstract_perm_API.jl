@@ -160,7 +160,6 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
 
             @test parse(P, "(1,3)(2,4,6)(3,5)") isa AP.AbstractPermutation
             @test parse(P, "(1,3)(2,4,6)(3,5)") == P([5, 4, 1, 6, 3, 2])
-
         end
     end
 end
