@@ -1,4 +1,5 @@
-const AP = AbstractPermutations
+module ExamplePerms
+import AbstractPermutations as AP
 
 function __degree(images::AbstractVector{<:Integer})
     @inbounds for i in lastindex(images):-1:firstindex(images)
@@ -7,42 +8,33 @@ function __degree(images::AbstractVector{<:Integer})
     return firstindex(images)
 end
 
-mutable struct Perm{T<:Integer} <: AP.AbstractPermutation
+struct Perm{T<:Integer} <: AP.AbstractPermutation # change to mutable for cycles
     images::Vector{T}
-    cycles::AP.CycleDecomposition{T}
-
+    # cycles::AP.CycleDecomposition{T} # to cache/compute on-demand
     function Perm{T}(
         images::AbstractVector{<:Integer},
         check::Bool = true,
     ) where {T}
-        if check && !isperm(images)
-            throw(
-                ArgumentError(
-                    "Provided images do not constitute a permutation!",
-                ),
-            )
+        Base.require_one_based_indexing(images)
+        if check && (!isperm(images) || isempty(images))
+            throw(ArgumentError("images do not constitute a permutation!"))
         end
         deg = __degree(images)
-        if deg == length(images)
-            return new{T}(images)
-        else
-            # for future: use @time one(Perm{Int})
-            # to check if julia can elide the creation of view
-            return new{T}(@view images[Base.OneTo(deg)])
-        end
+        # since we always take view Perm never takes the ownership of `images`
+        return new{T}(@view images[Base.OneTo(deg)])
     end
 end
 
 AP.degree(σ::Perm) = length(σ.images)
 
-Base.Base.@propagate_inbounds function Base.:^(n::Integer, σ::Perm)
-    return 1 ≤ n ≤ AP.degree(σ) ? oftype(n, @inbounds σ.images[n]) : n
+function Base.:^(n::Integer, σ::Perm)
+    return n in eachindex(σ.images) ? oftype(n, @inbounds σ.images[n]) : n
 end
 
 # this would be enough; for convienience we also define those
 
-inttype(::Type{Perm{T}}) where {T} = T
-inttype(::Type{Perm}) = UInt16 # the default type when not specified
+AP.inttype(::Type{Perm{T}}) where {T} = T
+AP.inttype(::Type{Perm}) = UInt16 # the default type when not specified
 
 function Perm(images::AbstractVector{<:Integer}, check = true)
     return Perm{AP.inttype(Perm)}(images, check)
@@ -66,7 +58,6 @@ end
 =#
 
 # some other performance overloads that are possible
-#=
-Base.copy(σ::Perm) = Perm(copy(σ.images), false)
-
-=#
+# Base.copy(σ::Perm) = Perm(copy(σ.images), false)
+# Base.broadcastable(σ::Perm) = Ref(σ)
+end # of module Perms
