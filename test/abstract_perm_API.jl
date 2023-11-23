@@ -8,16 +8,15 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         @test one(p) isa AP.AbstractPermutation
 
         @testset "the identity permutation" begin
-            a = P([1, 2, 3])
-            @test isone(a)
-            @test a == one(a)
-            @test isone(one(a))
-            @test isone(AP.degree(a))
-            @test AP.degree(a) == 1
+            id = P([1, 2, 3])
+            @test isone(id)
+            @test id == one(id)
+            @test isone(one(id))
+            @test AP.degree(id) == 0
 
-            @test collect(AP.cycles(a)) == [[1]]
+            @test collect(AP.cycles(id)) == Vector{Int}[]
 
-            @test all(i -> i^a == i, 1:5)
+            @test all(i -> i^p == i, 1:5)
         end
 
         @testset "same permutations" begin
