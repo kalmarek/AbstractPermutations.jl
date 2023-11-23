@@ -78,7 +78,7 @@ end
 
 """
     perm(p::AbstractPermutation)
-Return the "bare-metal" permutation (unwrap).
+Return the "bare-metal" permutation (unwrap). Return `σ` by default.
 
 !!! warn
     **For internal use only.**
