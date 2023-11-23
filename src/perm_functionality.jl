@@ -1,13 +1,22 @@
 """
-    parity(g::AbstractPermutation)
-Return the parity of number of factors in factorization of `g` into transpositions.
+    isodd(g::AbstractPermutation) -> Bool
+Return `true` if g is an odd permutation and `false` otherwise.
 
-Return `1` if the number is odd and `0` otherwise.
+An odd permutation decomposes into an odd number of transpositions.
 """
-parity(σ::AbstractPermutation) = __parity_generic(σ)
-parity(cd::CycleDecomposition) = Int(isodd(count(iseven ∘ length, cd)))
+Base.isodd(σ::AbstractPermutation) = __isodd(σ)
+Base.isodd(cd::CycleDecomposition) = isodd(count(iseven ∘ length, cd))
 
-function __parity_generic(σ::AbstractPermutation)
+"""
+    isodd(g::AbstractPermutation) -> Bool
+Return `true` if g is an even permutation and `false` otherwise.
+
+An even permutation decomposes into an even number of transpositions.
+"""
+Base.iseven(σ::AbstractPermutation) = !isodd(σ)
+Base.iseven(cd::CycleDecomposition) = !isodd(cd)
+
+function __isodd(σ::AbstractPermutation)
     to_visit = trues(degree(σ))
     parity = false
     k = 1
@@ -21,17 +30,17 @@ function __parity_generic(σ::AbstractPermutation)
             next = next^σ
         end
     end
-    return Int(parity)
+    return parity
 end
 
 """
     sign(g::AbstractPermutation)
-Return the sign of a permutation.
+Return the sign of a permutation as an integer `± 1`.
 
 `sign` represents the homomorphism from the permutation group to the unit group
 of `ℤ` whose kernel is the alternating group.
 """
-Base.sign(σ::AbstractPermutation) = ifelse(isone(parity(σ)), -1, 1)
+Base.sign(σ::AbstractPermutation) = ifelse(isodd(σ), -1, 1)
 
 """
     permtype(g::AbstractPermutation)
