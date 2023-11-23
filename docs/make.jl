@@ -19,7 +19,12 @@ makedocs(;
         edit_link = "main",
         assets = String[],
     ),
-    pages = ["Home" => "index.md"],
+    pages = [
+        "Home" => "index.md",
+        "`AbstractPermutation` interface" => "abstract_api.md",
+        "Other functions" => "misc.md",
+    ],
+    warnonly = [:missing_docs],
 )
 
 deploydocs(;

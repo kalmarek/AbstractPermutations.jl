@@ -55,6 +55,8 @@ Strings for the output of e.g. GAP could be copied directly into `@perm`, as lon
 they are not elided. Cycles of length `1` are not necessary, but can be included.
 
 # Examples:
+Using the exemplary implementation from `test/perms_by_images.jl`
+
 ```julia
 julia> p = @perm Perm{UInt16} "(1,3)(2,4)"
 (1,3)(2,4)

@@ -5,7 +5,7 @@ function __degree(images::AbstractVector{<:Integer})
     @inbounds for i in lastindex(images):-1:firstindex(images)
         images[i] ≠ i && return i
     end
-    return firstindex(images)
+    return zero(firstindex(images))
 end
 
 struct Perm{T<:Integer} <: AP.AbstractPermutation # change to mutable for cycles

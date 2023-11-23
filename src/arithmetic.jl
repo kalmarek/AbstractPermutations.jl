@@ -44,9 +44,7 @@ function Base.:(*)(σ::AbstractPermutation, τs::AbstractPermutation...)
     return typeof(σ)(img, false)
 end
 
-Base.:^(σ::AbstractPermutation, τ::AbstractPermutation) = conj(σ, τ)
-
-function Base.conj(σ::AbstractPermutation, τ::AbstractPermutation)
+function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
     deg = max(degree(σ), degree(τ))
     img = Vector{inttype(σ)}(undef, deg)
     @inbounds for i in Base.OneTo(deg)

@@ -8,16 +8,15 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         @test one(p) isa AP.AbstractPermutation
 
         @testset "the identity permutation" begin
-            a = P([1, 2, 3])
-            @test isone(a)
-            @test a == one(a)
-            @test isone(one(a))
-            @test isone(AP.degree(a))
-            @test AP.degree(a) == 1
+            id = P([1, 2, 3])
+            @test isone(id)
+            @test id == one(id)
+            @test isone(one(id))
+            @test AP.degree(id) == 0
 
-            @test collect(AP.cycles(a)) == [[1]]
+            @test collect(AP.cycles(id)) == Vector{Int}[]
 
-            @test all(i -> i^a == i, 1:5)
+            @test all(i -> i^p == i, 1:5)
         end
 
         @testset "same permutations" begin
@@ -64,7 +63,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "actions on 1:n" begin
-            p = P([1])
+            id = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
@@ -74,61 +73,62 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test 2^a == 1
             @test (3:7) .^ a == 3:7
             @test (1:5) .^ b == [2, 3, 1, 4, 5]
-            @test (1:10) .^ p == 1:10
+            @test (1:10) .^ id == 1:10
 
             # action preserves type
             @test UInt128(1)^a isa UInt128
             @test UInt32(100)^a isa UInt32
-            @test UInt8(100)^p isa UInt8
+            @test UInt8(100)^id isa UInt8
 
-            @test AP.firstmoved(a) == 1
-            @test AP.firstmoved(b) == 1
-            @test AP.firstmoved(c) == 4
-            @test AP.firstmoved(p) === nothing
+            @test AP.firstmoved(a, 1:AP.degree(a)) == 1
+            @test AP.firstmoved(b, 2:5) == 2
+            @test AP.firstmoved(c, 1:3) === nothing
+            @test AP.firstmoved(c, 1:5) == 4
+            @test AP.firstmoved(id, 5:10) === nothing
 
-            @test AP.nfixedpoints(p) == 1
-            @test AP.nfixedpoints(b) == 0
+            @test AP.nfixedpoints(id, 1:AP.degree(id)) == 0
+            @test AP.nfixedpoints(b, 1:AP.degree(b)) == 0
             @test AP.nfixedpoints(b, 2:5) == 2
-            @test AP.nfixedpoints(c) == 3
+            @test AP.nfixedpoints(c, 1:AP.degree(c)) == 3
             @test AP.nfixedpoints(c, 4:5) == 0
 
-            @test AP.fixedpoints(b) == Int[]
+            @test AP.fixedpoints(b, 1:AP.degree(b)) == Int[]
             @test AP.fixedpoints(b, 2:5) == [4, 5]
-            @test AP.fixedpoints(c) == [1, 2, 3]
+            @test AP.fixedpoints(c, 1:3) == [1, 2, 3]
             @test AP.fixedpoints(c, 2:4) == [2, 3]
-            @test AP.fixedpoints(p) == [1]
+            @test AP.fixedpoints(id, 5:7) == 5:7
         end
 
         @testset "permutation functions" begin
-            p = P([1]) # ()
+            id = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
-            @test AP.permtype(p) == Int[]
+            @test AP.permtype(id) == Int[]
             @test AP.permtype(a) == [2]
             @test AP.permtype(b) == [3]
             @test AP.permtype(b * c) == [3, 2]
 
-            @test sign(p) == 1
+            @test sign(id) == 1
             @test sign(a) == -1
             @test sign(b) == 1
             @test sign(c) == -1
             @test sign(a * b) == -1
             @test sign(a * b * c) == 1
 
-            @test AP.parity(p) == 0
-            @test AP.parity(a) == 1
-            @test AP.parity(b) == 0
-            @test AP.parity(a * b) == 1
-            @test AP.parity(a * b * c) == 0
+            @test isodd(id) == false == !iseven(id)
+            @test isodd(a) == true == !iseven(a)
+            @test isodd(b) == false == !iseven(b)
+            @test isodd(a * b) == true == !iseven(a * b)
+            @test isodd(a * b * c) == false == !iseven(a * b * c)
 
-            @test AP.parity(AP.cycles(p)) == 0
-            @test AP.parity(AP.cycles(a)) == 1
-            @test AP.parity(AP.cycles(b)) == 0
-            @test AP.parity(AP.cycles(a * b)) == 1
-            @test AP.parity(AP.cycles(a * b * c)) == 0
+            @test iseven(AP.cycles(id))
+            @test isodd(AP.cycles(a))
+            @test iseven(AP.cycles(b))
+            @test isodd(AP.cycles(a * b))
+            @test iseven(AP.cycles(a * b * c))
 
-            @test AP.order(p) == 1
+            @test AP.order(id) == 1
             @test AP.order(a) == 2
             @test AP.order(b) == 3
             @test AP.order(c) == 2
@@ -136,7 +136,6 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.order(a * b) == 2
             @test AP.order(a * b * c) == 2
 
-            @test collect(AP.cycles(p)) == [[1]]
             @test collect(AP.cycles(a)) == [[1, 2]]
             @test collect(AP.cycles(b)) == [[1, 2, 3]]
             @test collect(AP.cycles(a * b)) == [[1, 3], [2]]

@@ -38,14 +38,15 @@ abstract type AbstractPermutation <: GroupsCore.GroupElement end
 
 """
     degree(σ::AbstractPermutation)
-Return a minimal number `n ≥ 1` such that `σ(k) == k` for all `k > n`,
+Return a minimal number `n ≥ 0` such that `σ(k) == k` for all `k > n`.
 
 Such number `n` can be understood as a _degree_ of a permutation, since we can
 regard `σ` as an element of `Sym(1:n)` (and not of `Sym(1:n-1)`).
 
 !!! note
-    By this convention `degree` of the trivial permutation is equal to `1` and
-    it is the only permutation with this property.
+    By this convention `degree` of the identity permutation is equal to `0`
+    and it is the only permutation with this property.
+    Also by this convention there is no permutation with `degree` equal to `1`.
 """
 function degree(σ::AbstractPermutation)
     throw(
@@ -58,10 +59,10 @@ end
 
 """
     ^(i::Integer, σ::AbstractPermutation)
-Return the image of `i` under `σ`.
+Return the image of `i` under `σ` preserving the type of `i`.
 
 We consider `σ` as a permutation of `ℕ` (the positive integers), with finite
-support, so by convention `k^σ = k` for all `k > degree(σ)`.
+support, so `k^σ = k` for all `k > degree(σ)`.
 
 !!! warn
     The behaviour of `i^σ` for `i ≤ 0` is undefined and can not be relied upon.
@@ -77,7 +78,7 @@ end
 
 """
     perm(p::AbstractPermutation)
-Return the "bare-metal" permutation (unwrap).
+Return the "bare-metal" permutation (unwrap). Return `σ` by default.
 
 !!! warn
     **For internal use only.**
@@ -122,9 +123,9 @@ function Base.convert(
     return P(__images_vector(p), false)
 end
 
-Base.one(::Type{P}) where {P<:AbstractPermutation} = P(inttype(P)[1], false)
+Base.one(::Type{P}) where {P<:AbstractPermutation} = P(inttype(P)[], false)
 Base.one(σ::AbstractPermutation) = one(typeof(σ))
-Base.isone(σ::AbstractPermutation) = degree(σ) == 1
+Base.isone(σ::AbstractPermutation) = degree(σ) == 0
 
 function _deepcopy(p::AbstractPermutation)
     return typeof(p)(__images_vector(p), false)
