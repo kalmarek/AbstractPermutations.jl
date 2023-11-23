@@ -63,7 +63,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "actions on 1:n" begin
-            p = P([1])
+            id = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
@@ -73,29 +73,30 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test 2^a == 1
             @test (3:7) .^ a == 3:7
             @test (1:5) .^ b == [2, 3, 1, 4, 5]
-            @test (1:10) .^ p == 1:10
+            @test (1:10) .^ id == 1:10
 
             # action preserves type
             @test UInt128(1)^a isa UInt128
             @test UInt32(100)^a isa UInt32
-            @test UInt8(100)^p isa UInt8
+            @test UInt8(100)^id isa UInt8
 
-            @test AP.firstmoved(a) == 1
-            @test AP.firstmoved(b) == 1
-            @test AP.firstmoved(c) == 4
-            @test AP.firstmoved(p) === nothing
+            @test AP.firstmoved(a, 1:AP.degree(a)) == 1
+            @test AP.firstmoved(b, 2:5) == 2
+            @test AP.firstmoved(c, 1:3) === nothing
+            @test AP.firstmoved(c, 1:5) == 4
+            @test AP.firstmoved(id, 5:10) === nothing
 
-            @test AP.nfixedpoints(p) == 1
-            @test AP.nfixedpoints(b) == 0
+            @test AP.nfixedpoints(id, 1:AP.degree(id)) == 0
+            @test AP.nfixedpoints(b, 1:AP.degree(b)) == 0
             @test AP.nfixedpoints(b, 2:5) == 2
-            @test AP.nfixedpoints(c) == 3
+            @test AP.nfixedpoints(c, 1:AP.degree(c)) == 3
             @test AP.nfixedpoints(c, 4:5) == 0
 
-            @test AP.fixedpoints(b) == Int[]
+            @test AP.fixedpoints(b, 1:AP.degree(b)) == Int[]
             @test AP.fixedpoints(b, 2:5) == [4, 5]
-            @test AP.fixedpoints(c) == [1, 2, 3]
+            @test AP.fixedpoints(c, 1:3) == [1, 2, 3]
             @test AP.fixedpoints(c, 2:4) == [2, 3]
-            @test AP.fixedpoints(p) == [1]
+            @test AP.fixedpoints(id, 5:7) == 5:7
         end
 
         @testset "permutation functions" begin

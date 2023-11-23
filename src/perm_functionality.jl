@@ -55,11 +55,11 @@ function permtype(σ::AbstractPermutation)
 end
 
 """
-    firstmoved(g::AbstractPermutation[, range = 1:degree(g)])
+    firstmoved(g::AbstractPermutation, range)
 Return the first point from `range` that is moved by `g`, or `nothing`
 if `g` fixes `range` point-wise.
 """
-function firstmoved(σ::AbstractPermutation, range = Base.OneTo(degree(σ)))
+function firstmoved(σ::AbstractPermutation, range)
     all(>(degree(σ)), range) && return nothing
     for i in range
         if i^σ ≠ i
@@ -70,11 +70,11 @@ function firstmoved(σ::AbstractPermutation, range = Base.OneTo(degree(σ)))
 end
 
 """
-    fixedpoints(g::AbstractPermutation[, range = 1:degree(g)])
+    fixedpoints(g::AbstractPermutation, range)
 Return the vector of points in `range` fixed by `g`.
 """
-function fixedpoints(σ::AbstractPermutation, range = Base.OneTo(degree(σ)))
-    all(>(degree(σ)), range) && return eltype(range)[]
+function fixedpoints(σ::AbstractPermutation, range)
+    all(>(degree(σ)), range) && return [i for i in range]
     return [i for i in range if i^σ == i]
 end
 
@@ -82,8 +82,9 @@ end
     nfixedpoints(g::AbstractPermutation[, range = 1:degree(g)])
 Return the number of points in `range` fixed by `g`.
 """
-function nfixedpoints(σ::AbstractPermutation, range = Base.OneTo(degree(σ)))
-    return count(i -> i^σ == i, range)
+function nfixedpoints(σ::AbstractPermutation, range)
+    all(>(degree(σ)), range) && return length(range)
+    return count(i -> i^σ == i, range; init = 0)
 end
 
 function GroupsCore.order(::Type{T}, σ::AbstractPermutation) where {T}
