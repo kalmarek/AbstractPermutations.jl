@@ -59,10 +59,10 @@ end
 
 """
     ^(i::Integer, σ::AbstractPermutation)
-Return the image of `i` under `σ`.
+Return the image of `i` under `σ` preserving the type of `i`.
 
 We consider `σ` as a permutation of `ℕ` (the positive integers), with finite
-support, so by convention `k^σ = k` for all `k > degree(σ)`.
+support, so `k^σ = k` for all `k > degree(σ)`.
 
 !!! warn
     The behaviour of `i^σ` for `i ≤ 0` is undefined and can not be relied upon.
