@@ -123,6 +123,8 @@ function Base.convert(
     return P(__images_vector(p), false)
 end
 
+Base.convert(::Type{P}, p::P) where {P<:AbstractPermutation} = p
+
 Base.one(::Type{P}) where {P<:AbstractPermutation} = P(inttype(P)[], false)
 Base.one(σ::AbstractPermutation) = one(typeof(σ))
 Base.isone(σ::AbstractPermutation) = degree(σ) == 0
