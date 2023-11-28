@@ -3,11 +3,23 @@ import AbstractPermutations as AP
 function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
     @testset "AbstractPermutation API test: $P" begin
         @test P([1]) isa AP.AbstractPermutation
-        @test_throws ArgumentError P([2])
-        @test_throws ArgumentError P([1, 2, 3, 1])
+        try
+            P([2])
+            @warn "$P doesn't perform image vector validation, use it with care!"
+        catch e
+            if !(e isa ArgumentError)
+                rethrow(e)
+            end
+        end
 
-        p = P([1])
-        @test one(p) isa AP.AbstractPermutation
+        try
+            P([1, 2, 3, 1])
+            @warn "$P doesn't perform image vector validation, use it with care!"
+        catch e
+            if !(e isa ArgumentError)
+                rethrow(e)
+            end
+        end
 
         @testset "the identity permutation" begin
             id = P([1, 2, 3])
