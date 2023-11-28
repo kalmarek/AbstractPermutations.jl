@@ -37,7 +37,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         @testset "same permutations" begin
             vec = [3, 1, 2, 4]
             a = P(vec)
-            a_ = P(vec[1:3])
+            a_ = P(vec[1:4])
             @test !isone(a)
             @test !isone(a_)
             @test AP.degree(a) == 3
@@ -78,9 +78,9 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "actions on 1:n" begin
-            id = P([1]) # ()
-            a = P([2, 1, 3]) # (1,2)
-            b = P([2, 3, 1]) # (1,2,3)
+            id = P(1:5) # ()
+            a = P([2, 1, 3, 4, 5]) # (1,2)
+            b = P([2, 3, 1, 4, 5]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
 
             # correctness of action
@@ -115,9 +115,9 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "permutation functions" begin
-            id = P([1]) # ()
-            a = P([2, 1, 3]) # (1,2)
-            b = P([2, 3, 1]) # (1,2,3)
+            id = P(1:5) # ()
+            a = P([2, 1, 3, 4, 5]) # (1,2)
+            b = P([2, 3, 1, 4, 5]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
             @test AP.permtype(id) == Int[]
             @test AP.permtype(a) == [2]
@@ -158,9 +158,9 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         end
 
         @testset "io/show and parsing" begin
-            p = P([1]) # ()
-            a = P([2, 1, 3]) # (1,2)
-            b = P([2, 3, 1]) # (1,2,3)
+            p = P(1:5) # ()
+            a = P([2, 1, 3, 4, 5]) # (1,2)
+            b = P([2, 3, 1, 4, 5]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
             @test sprint(show, MIME"text/plain"(), p) == "()"
             @test sprint(show, MIME"text/plain"(), a) == "(1,2)"
