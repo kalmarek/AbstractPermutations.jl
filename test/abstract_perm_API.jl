@@ -1,3 +1,5 @@
+using Test
+import AbstractPermutations as AP
 function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
     @testset "AbstractPermutation API test: $P" begin
         @test P([1]) isa AP.AbstractPermutation
