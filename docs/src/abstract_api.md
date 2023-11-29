@@ -101,14 +101,11 @@ end
 
 With this the implementation is complete! To test if the implementation follows the specification a test suite is provided:
 
-```jldoctest APerm; filter = [r"\|\s+(\d+\s+)+(\d+\.\d+s)", r"Test\.DefaultTestSet(.*)"]
+```jldoctest APerm
 include(joinpath(pkgdir(AbstractPermutations), "test", "abstract_perm_API.jl"))
-abstract_perm_interface_test(APerm);
-
+abstract_perm_interface_test(APerm)
+nothing # to hide output
 # output
-Test Summary:                                                    | Pass  Total  Time
-AbstractPermutation API test: APerm |   95     95  0.4s
-Test.DefaultTestSet("AbstractPermutation API test: APerm", Any[Test.DefaultTestSet("the identity permutation", Any[], 7, false, false, true, 1.701268412377077e9, 1.701268412390534e9, false), Test.DefaultTestSet("same permutations", Any[], 13, false, false, true, 1.701268412390564e9, 1.701268412390592e9, false), Test.DefaultTestSet("group arithmetic", Any[], 11, false, false, true, 1.701268412390603e9, 1.701268412454585e9, false), Test.DefaultTestSet("actions on 1:n", Any[], 23, false, false, true, 1.701268412454622e9, 1.701268412454663e9, false), Test.DefaultTestSet("permutation functions", Any[], 31, false, false, true, 1.701268412454673e9, 1.701268412454732e9, false), Test.DefaultTestSet("io/show and parsing", Any[], 9, false, false, true, 1.70126841245474e9, 1.701268412497615e9, false)], 1, false, false, true, 1.701268412376839e9, 1.70126841249762e9, false)
 ```
 
 ### Suplementary Methods
