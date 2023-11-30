@@ -19,4 +19,8 @@ include("abstract_perm_API.jl")
 
     include("parsing.jl")
 
+    include("aperm_interface_check.jl")
+
+    import .APerms
+    abstract_perm_interface_test(APerms.APerm)
 end
