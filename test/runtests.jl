@@ -17,10 +17,6 @@ include("abstract_perm_API.jl")
 
     abstract_perm_interface_test(EP.Perm)
 
-    @testset "parsing" begin
-        @test isone(parse(EP.Perm, ""))
-        @test_throws ArgumentError parse(EP.Perm, "(1,2,3")
-        @test_throws ArgumentError parse(EP.Perm, "(1,2,3),(4,5)")
-        @test_throws ArgumentError parse(EP.Perm, "(1,2,3),(4 5)")
-    end
+    include("parsing.jl")
+
 end
