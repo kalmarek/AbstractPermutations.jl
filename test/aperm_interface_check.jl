@@ -31,12 +31,14 @@ end
 
     @test AP.inttype(one(APerm)) == UInt32
     # but actually it'd be better to have it as Int64
-    one(APerm)
-    k1 = @allocated one(APerm)
+    a = APerm([1, 2, 3])
+    b = APerm([2, 3, 1])
+    a * b
+    k1 = @allocated a * b
     AP.inttype(::Type{APerm}) = Int
 
-    one(APerm)
-    k2 = @allocated one(APerm)
+    a * b
+    k2 = @allocated a * b
     @test k2 < k1
 end
 
