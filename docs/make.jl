@@ -11,7 +11,7 @@ DocMeta.setdocmeta!(
 makedocs(;
     modules = [AbstractPermutations],
     authors = "Marek Kaluba <kalmar@mailbox.org>",
-    repo = "https://github.com/kalmarek/AbstractPermutations.jl/blob/{commit}{path}#{line}",
+    repo = Documenter.Remotes.GitHub("kalmarek", "AbstractPermutations.jl"),
     sitename = "AbstractPermutations.jl",
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", "false") == "true",
