@@ -49,7 +49,7 @@ storage at fixed length.
 
 ### Implementing Obligatory methods
 
-```jldoctest APerm; output=false
+```@example APerm
 import AbstractPermutations
 struct APerm{T} <: AbstractPermutations.AbstractPermutation
     images::Vector{T}
@@ -62,50 +62,41 @@ struct APerm{T} <: AbstractPermutations.AbstractPermutation
         return new{T}(v, __degree(v))
     end
 end
-
-# for our convenience we define
-APerm(v::AbstractVector{T}, check=true) where T = APerm{T}(v, check)
-
-# output
-APerm
+nothing # hide
 ```
 
 Above we defined permutations by storing the vector of their images together
 with the computed degree.
 For completeness this `__degree`` could be computed as
 
-```jldoctest APerm; output=false
+```@example APerm
 function __degree(images::AbstractVector{<:Integer})
     @inbounds for i in lastindex(images):-1:firstindex(images)
         images[i] ≠ i && return i
     end
     return zero(firstindex(images))
 end
-
-# output
-__degree (generic function with 1 method)
+nothing # hide
 ```
 
 Now we need to implement the remaining two functions which will be simple enough:
 
-```jldoctest APerm; output=false
+```@example APerm
 AbstractPermutations.degree(p::APerm) = p.degree
 function Base.:^(i::Integer, p::APerm)
     deg = AbstractPermutations.degree(p)
     # make sure that we return something of the same type as `i`
     return 1 ≤ i ≤ deg ? oftype(i, p.images[i]) : i
 end
-
-# output
+nothing # hide
 ```
 
 With this the implementation is complete! To test if the implementation follows the specification a test suite is provided:
 
-```jldoctest APerm
+```@example APerm
 include(joinpath(pkgdir(AbstractPermutations), "test", "abstract_perm_API.jl"))
-abstract_perm_interface_test(APerm)
-nothing # to hide output
-# output
+abstract_perm_interface_test(APerm{UInt16})
+nothing # hide
 ```
 
 ### Suplementary Methods
