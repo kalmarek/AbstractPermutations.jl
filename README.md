@@ -30,7 +30,7 @@ The packages following `AbstractPermutation` interface:
 
 ## Testing of the interface
 
-We provide test suite for the interface. If `APerm` is your implementation you can test it via the following.
+We provide test suite for the interface. An example implementation [`ExamplePerms.Perm`](https://github.com/kalmarek/AbstractPermutations.jl/blob/main/test/perms_by_images.jl) can be tested via the following.
 
 ```julia
 julia> using AbstractPermutations
