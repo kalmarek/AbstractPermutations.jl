@@ -176,35 +176,3 @@ Base.broadcastable(p::AbstractPermutation) = Ref(p)
 Return an iterator over cycles in the disjoint cycle decomposition of `g`.
 """
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
-
-function CycleDecomposition(σ::AbstractPermutation)
-    T = inttype(σ)
-    deg = degree(σ)
-
-    # allocate vectors of the expected size
-    visited = falses(deg)
-    cycles = Vector{T}(undef, deg)
-    # expected number of cycles - (overestimation of) the harmonic
-    cyclesptr = Vector{T}(undef, 5 + ceil(Int, Base.log(deg + 1)))
-
-    # shrink them accordingly
-    resize!(cycles, 0)
-    resize!(cyclesptr, 1)
-    cyclesptr[begin] = 1
-
-    @inbounds for idx in Base.OneTo(deg)
-        visited[idx] && continue
-        first_pt = idx
-
-        push!(cycles, first_pt)
-        visited[first_pt] = true
-        next_pt = first_pt^σ
-        while next_pt ≠ first_pt
-            push!(cycles, next_pt)
-            visited[next_pt] = true
-            next_pt = next_pt^σ
-        end
-        push!(cyclesptr, length(cycles) + 1)
-    end
-    return CycleDecomposition{T}(cycles, cyclesptr)
-end
