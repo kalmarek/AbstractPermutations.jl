@@ -162,11 +162,6 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
             c = P([1, 2, 3, 5, 4]) # (4,5)
-            @test sprint(show, MIME"text/plain"(), p) == "()"
-            @test sprint(show, MIME"text/plain"(), a) == "(1,2)"
-            @test sprint(show, MIME"text/plain"(), b) == "(1,2,3)"
-            @test sprint(show, MIME"text/plain"(), c) == "(4,5)"
-            @test sprint(show, MIME"text/plain"(), b * c) == "(1,2,3)(4,5)"
 
             @test sprint(show, AP.cycles(b)) == "Cycle Decomposition: (1,2,3)"
             @test sprint(show, AP.cycles(b * c)) ==

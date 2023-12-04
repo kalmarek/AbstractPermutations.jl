@@ -29,7 +29,7 @@ function __print_perm(
     end
 
     if isone(p)
-        return print(io, "()")
+        print(io, "()")
     else
         for (i, c) in enumerate(cycles(p))
             trunc, available_width = __print_cycle(io, c, available_width)
