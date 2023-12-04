@@ -197,32 +197,3 @@ function CycleDecomposition(σ::AbstractPermutation)
     end
     return CycleDecomposition{T}(cycles, cyclesptr)
 end
-
-# IO
-
-function Base.show(io::IO, ::MIME"text/plain", g::AbstractPermutation)
-    return _print_perm(io, g)
-end
-
-function _print_perm(
-    io::IO,
-    p::AbstractPermutation,
-    width::Integer = last(displaysize(io)),
-)
-    if isone(p)
-        return print(io, "()")
-    else
-        for c in cycles(p)
-            length(c) == 1 && continue
-            cyc = join(c, ",")
-
-            if width ≥ length(cyc) + 2
-                print(io, "(", cyc, ")")
-                width -= length(cyc) + 2
-            else
-                print(io, "(", SubString(cyc, 1, width - 3), " …")
-                break
-            end
-        end
-    end
-end
