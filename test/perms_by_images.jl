@@ -40,7 +40,11 @@ function Perm(images::AbstractVector{<:Integer}, check = true)
     return Perm{AP.inttype(Perm)}(images, check)
 end
 
-# we could also define these to make use of lazy-caching of cycle decomposition
+# we also define this function to squeeze more performance
+@inline AP.__unsafe_image(n::Integer, σ::Perm) =
+    oftype(n, @inbounds σ.images[n])
+
+# to make use of lazy-caching of cycle decomposition
 #=
 function AP.cycles(σ::Perm)
     if !isdefined(σ, :cycles)

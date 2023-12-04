@@ -77,6 +77,17 @@ function Base.:^(::Integer, σ::AbstractPermutation)
 end
 
 """
+    __unsafe_image(i::Integer, σ::AbstractPermutation)
+The same as `i^σ`, but assuming that `i ∈ Base.OneTo(degree(σ))`.
+
+!!! warn
+    The caller is responsible for checking the assumption.
+    Failure to do so may (and probably will) lead to segfaults in the best
+    case scenario and to silent data corruption in the worst!.
+"""
+__unsafe_image(i::Integer, σ::AbstractPermutation) = i^σ
+
+"""
     perm(p::AbstractPermutation)
 Return the "bare-metal" permutation (unwrap). Return `σ` by default.
 
