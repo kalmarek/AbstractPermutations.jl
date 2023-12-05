@@ -8,7 +8,10 @@ The `AbstractPermutation` interface consists of just three mandatory functions.
 Note that none of them is exported, hence it is safe to `import`/`using`
 the package without introducing any naming conflicts with other packages.
 
-There are three obligatory methods are as follows:
+## Mandatory methods
+
+The three mandatory methods are:
+
 * a constructor,
 * `AbstractPermutations.degree` and
 * `Base.^`.
@@ -30,12 +33,15 @@ degree
 ^(::Integer, ::AbstractPermutation)
 ```
 
-Moreover there are two more internal, suplementary functions that may be
-overloaded by the implementer, if needed.
+## Suplementary methods
+
+Moreover there are three internal, suplementary functions that may be overloaded
+by the implementer, if needed (mostly for performance reasons).
 
 ```@docs
 inttype
 perm
+__unsafe_image
 ```
 
 ## Example implementation
@@ -47,7 +53,7 @@ interface you may find in `ExamplePerms` module defined in
 Here we provide an alternative implementation which keeps the internal
 storage at fixed length.
 
-### Implementing Obligatory methods
+### Implementing mandatory methods
 
 ```@example APerm
 import AbstractPermutations
@@ -67,14 +73,12 @@ nothing # hide
 
 Above we defined permutations by storing the vector of their images together
 with the computed degree.
-For completeness this `__degree`` could be computed as
+For completeness this `__degree` could be computed as
 
 ```@example APerm
 function __degree(images::AbstractVector{<:Integer})
-    @inbounds for i in lastindex(images):-1:firstindex(images)
-        images[i] ≠ i && return i
-    end
-    return zero(firstindex(images))
+    k = findlast(i->images[i] ≠ i, eachindex(images))
+    return something(k, 0)
 end
 nothing # hide
 ```
@@ -91,7 +95,8 @@ end
 nothing # hide
 ```
 
-With this the implementation is complete! To test if the implementation follows the specification a test suite is provided:
+With this the interface is implementation is complete. To test whether the implementation
+follows the specification a test suite is provided:
 
 ```@example APerm
 include(joinpath(pkgdir(AbstractPermutations), "test", "abstract_perm_API.jl"))
@@ -105,8 +110,18 @@ Since in `APerm{T}` we store images as a `Vector{T}`, to avoid spurious
 allocations we may define
 
 ```julia
-AP.inttype(::Type{APerm{T}}) where T = T
+AbstractPermutations.inttype(::Type{APerm{T}}) where T = T
 ```
 
 There is no need to define `AbstractPermutations.perm` as `APerm` is already
 very low level and suitable for high performance code-paths.
+
+Finally to squeeze even more performance one could define `__unsafe_image`
+with the same semantics as `n^σ` under the assumption that `n` belongs to
+`Base.OneTo(degree(σ))`:
+
+```julia
+@inline function AbstractPermutations.__unsafe_image(n::Integer, σ::APerm)
+    return oftype(n, @inbounds σ.images[n])
+end
+```

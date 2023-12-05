@@ -13,7 +13,7 @@ Subtypes `APerm <: AbstractPermutation` must implement the following functions:
   constitute a honest permutation.
 * [`Base.:^(i::Integer, σ::APerm)`](@ref ^(::Integer, ::AbstractPermutation))
   the customary notation for the image of `i` under `σ`.
-* [`degree(σ::APerm)`](@ref degree) the minimal `d ≥ 1` such that `σ` fixes all
+* [`degree(σ::APerm)`](@ref degree) the minimal `d ≥ 0` such that `σ` fixes all
   `k ≥ d`.
 
 !!! note
@@ -33,6 +33,7 @@ Subtypes `APerm <: AbstractPermutation` must implement the following functions:
 * [`perm(σ::APerm)`](@ref perm) by default returns `σ` - the "simplest"
   (implementation-wise) permutation underlying `σ`.
 * [`inttype(::Type{<:APerm})`](@ref inttype) by default returns `UInt32`.
+* [`__unsafe_image(i::Integer, σ::APerm)`](@ref __unsafe_image) defaults to `i^σ`.
 """
 abstract type AbstractPermutation <: GroupsCore.GroupElement end
 
@@ -77,16 +78,29 @@ function Base.:^(::Integer, σ::AbstractPermutation)
 end
 
 """
+    __unsafe_image(i::Integer, σ::AbstractPermutation)
+The same as `i^σ`, but assuming that `i ∈ Base.OneTo(degree(σ))`.
+
+!!! warn
+    The caller is responsible for checking the assumption.
+    Failure to do so may (and probably will) lead to segfaults in the best
+    case scenario and to silent data corruption in the worst!.
+"""
+__unsafe_image(i::Integer, σ::AbstractPermutation) = i^σ
+
+"""
     perm(p::AbstractPermutation)
 Return the "bare-metal" permutation (unwrap). Return `σ` by default.
 
 !!! warn
     **For internal use only.**
 
-Access to wrapped permutation object. For "bare-metal" permutations this needs
-to return the identical (i.e. ``===`) object. The intention of ths functions
-is to provide un-wrapped permutations to computationally intensive algorithms,
-so that the external wrappers (if exist) do not hinder the performance.
+Provide access to wrapped permutation object. For "bare-metal" permutations this
+method needs to return the identical (i.e. ``===`) object.
+
+The intention of this method is to provide an un-wrapped permutations to
+computationally intensive algorithms, so that the external wrappers (if present)
+do not hinder the performance.
 """
 perm(p::AbstractPermutation) = p
 
@@ -97,7 +111,7 @@ Return the underlying "storage" integer.
 !!! warn
     **For internal use only.**
 
-The intension is to provide optimal storage type when the `images` vector
+The intention is to provide optimal storage type when the `images` vector
 constructor is used (to save allocations and memory copy).
 For example a hypothetic permutation `Perm8` of elements up to length `255`
 may alter the default to `UInt8`.
@@ -112,8 +126,11 @@ end
 
 # utilities for Abstract Permutations
 
-function __images_vector(p::AbstractPermutation, n = degree(p))
-    return inttype(p)[i^p for i in Base.OneTo(n)]
+function __images_vector(p::AbstractPermutation)
+    img = let ^ = __unsafe_image
+        inttype(p)[i^p for i in Base.OneTo(degree(p))]
+    end
+    return img
 end
 
 function Base.convert(
@@ -142,9 +159,11 @@ Base.copy(p::AbstractPermutation) = _deepcopy(p)
 
 function Base.:(==)(σ::AbstractPermutation, τ::AbstractPermutation)
     degree(σ) ≠ degree(τ) && return false
-    @inbounds for i in Base.OneTo(degree(σ))
-        if i^σ != i^τ
-            return false
+    let ^ = __unsafe_image
+        for i in Base.OneTo(degree(σ))
+            if i^σ != i^τ
+                return false
+            end
         end
     end
     return true
@@ -152,8 +171,10 @@ end
 
 function Base.hash(σ::AbstractPermutation, h::UInt)
     h = hash(AbstractPermutation, h)
-    @inbounds for i in Base.OneTo(degree(σ))
-        h = hash(i^σ, h)
+    let ^ = __unsafe_image
+        for i in Base.OneTo(degree(σ))
+            h = hash(i^σ, h)
+        end
     end
     return h
 end
@@ -165,35 +186,3 @@ Base.broadcastable(p::AbstractPermutation) = Ref(p)
 Return an iterator over cycles in the disjoint cycle decomposition of `g`.
 """
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
-
-function CycleDecomposition(σ::AbstractPermutation)
-    T = inttype(σ)
-    deg = degree(σ)
-
-    # allocate vectors of the expected size
-    visited = falses(deg)
-    cycles = Vector{T}(undef, deg)
-    # expected number of cycles - (overestimation of) the harmonic
-    cyclesptr = Vector{T}(undef, 5 + ceil(Int, Base.log(deg + 1)))
-
-    # shrink them accordingly
-    resize!(cycles, 0)
-    resize!(cyclesptr, 1)
-    cyclesptr[begin] = 1
-
-    @inbounds for idx in Base.OneTo(deg)
-        visited[idx] && continue
-        first_pt = idx
-
-        push!(cycles, first_pt)
-        visited[first_pt] = true
-        next_pt = first_pt^σ
-        while next_pt ≠ first_pt
-            push!(cycles, next_pt)
-            visited[next_pt] = true
-            next_pt = next_pt^σ
-        end
-        push!(cyclesptr, length(cycles) + 1)
-    end
-    return CycleDecomposition{T}(cycles, cyclesptr)
-end

@@ -23,3 +23,41 @@ function Base.show(io::IO, cd::CycleDecomposition)
         print(io, ')')
     end
 end
+
+function CycleDecomposition(σ::AbstractPermutation)
+    T = inttype(σ)
+    deg = degree(σ)
+
+    # allocate vectors of the expected size
+    cycles = Vector{T}(undef, deg)
+    visited = falses(deg)
+    # the upper bound for the number of cycles
+    cyclesptr = zeros(T, deg + 1)
+
+    cptr_idx = 1
+    cidx = 0
+    cyclesptr[cptr_idx] = cidx + 1
+
+    let ^ = __unsafe_image
+        for idx in Base.OneTo(deg)
+            @inbounds visited[idx] && continue
+            first_pt = idx
+            cidx += 1
+
+            @inbounds cycles[cidx] = first_pt
+            @inbounds visited[first_pt] = true
+            next_pt = first_pt^σ
+            while next_pt ≠ first_pt
+                cidx += 1
+                @inbounds cycles[cidx] = next_pt
+                @inbounds visited[next_pt] = true
+                next_pt = next_pt^σ
+            end
+            cptr_idx += 1 # we finished the cycle
+            @inbounds cyclesptr[cptr_idx] = cidx + 1
+        end
+    end
+    resize!(cycles, cidx)
+    resize!(cyclesptr, cptr_idx)
+    return CycleDecomposition{T}(cycles, cyclesptr)
+end

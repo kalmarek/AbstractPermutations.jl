@@ -35,7 +35,7 @@ end
 
 """
     sign(g::AbstractPermutation)
-Return the sign of a permutation as an integer `± 1`.
+Return the sign of a permutation as an integer `±1`.
 
 `sign` represents the homomorphism from the permutation group to the unit group
 of `ℤ` whose kernel is the alternating group.
@@ -47,8 +47,9 @@ Base.sign(σ::AbstractPermutation) = ifelse(isodd(σ), -1, 1)
 Return the group-theoretic type of permutation `g`, i.e. the vector of lengths
 of cycles in the (disjoint) cycle decomposition of `g`.
 
-The lengths are sorted in decreasing order and cycles of length `1` are omitted.
-`permtype(g)` fully determines the conjugacy class of `g` in the full symmetric group.
+The lengths are sorted in decreasing order and cycles of length `1` are
+omitted. `permtype(g)` fully determines the conjugacy class of `g` in the full
+symmetric group.
 """
 function permtype(σ::AbstractPermutation)
     return sort!([length(c) for c in cycles(σ) if length(c) > 1]; rev = true)
@@ -74,12 +75,12 @@ end
 Return the vector of points in `range` fixed by `g`.
 """
 function fixedpoints(σ::AbstractPermutation, range)
-    all(>(degree(σ)), range) && return [i for i in range]
+    all(>(degree(σ)), range) && return collect(range)
     return [i for i in range if i^σ == i]
 end
 
 """
-    nfixedpoints(g::AbstractPermutation[, range = 1:degree(g)])
+    nfixedpoints(g::AbstractPermutation, range)
 Return the number of points in `range` fixed by `g`.
 """
 function nfixedpoints(σ::AbstractPermutation, range)
