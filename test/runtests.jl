@@ -25,4 +25,7 @@ import .ExamplePerms as EP
 
     import .APerms
     abstract_perm_interface_test(APerms.APerm)
+
+    @test convert(APerm, EP.Perm([2, 3, 1])) isa APerm
+    @test convert(APerm, EP.Perm([2, 3, 1])) == EP.Perm([2, 3, 1])
 end
