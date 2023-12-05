@@ -123,8 +123,11 @@ end
 
 # utilities for Abstract Permutations
 
-function __images_vector(p::AbstractPermutation, n = degree(p))
-    return inttype(p)[i^p for i in Base.OneTo(n)]
+function __images_vector(p::AbstractPermutation)
+    img = let ^ = __unsafe_image
+        inttype(p)[i^p for i in Base.OneTo(degree(p))]
+    end
+    return img
 end
 
 function Base.convert(
@@ -153,9 +156,11 @@ Base.copy(p::AbstractPermutation) = _deepcopy(p)
 
 function Base.:(==)(σ::AbstractPermutation, τ::AbstractPermutation)
     degree(σ) ≠ degree(τ) && return false
-    @inbounds for i in Base.OneTo(degree(σ))
-        if i^σ != i^τ
-            return false
+    let ^ = __unsafe_image
+        for i in Base.OneTo(degree(σ))
+            if i^σ != i^τ
+                return false
+            end
         end
     end
     return true
@@ -163,8 +168,10 @@ end
 
 function Base.hash(σ::AbstractPermutation, h::UInt)
     h = hash(AbstractPermutation, h)
-    @inbounds for i in Base.OneTo(degree(σ))
-        h = hash(i^σ, h)
+    let ^ = __unsafe_image
+        for i in Base.OneTo(degree(σ))
+            h = hash(i^σ, h)
+        end
     end
     return h
 end

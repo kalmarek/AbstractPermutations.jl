@@ -38,22 +38,24 @@ function CycleDecomposition(σ::AbstractPermutation)
     cidx = 0
     cyclesptr[cptr_idx] = cidx + 1
 
-    for idx in Base.OneTo(deg)
-        visited[idx] && continue
-        first_pt = idx
-        cidx += 1
-
-        cycles[cidx] = first_pt
-        visited[first_pt] = true
-        next_pt = first_pt^σ
-        while next_pt ≠ first_pt
+    let ^ = __unsafe_image
+        for idx in Base.OneTo(deg)
+            @inbounds visited[idx] && continue
+            first_pt = idx
             cidx += 1
-            cycles[cidx] = next_pt
-            visited[next_pt] = true
-            next_pt = next_pt^σ
+
+            @inbounds cycles[cidx] = first_pt
+            @inbounds visited[first_pt] = true
+            next_pt = first_pt^σ
+            while next_pt ≠ first_pt
+                cidx += 1
+                @inbounds cycles[cidx] = next_pt
+                @inbounds visited[next_pt] = true
+                next_pt = next_pt^σ
+            end
+            cptr_idx += 1 # we finished the cycle
+            @inbounds cyclesptr[cptr_idx] = cidx + 1
         end
-        cptr_idx += 1 # we finished the cycle
-        cyclesptr[cptr_idx] = cidx + 1
     end
     resize!(cycles, cidx)
     resize!(cyclesptr, cptr_idx)

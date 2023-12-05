@@ -74,7 +74,7 @@ end
 Return the vector of points in `range` fixed by `g`.
 """
 function fixedpoints(σ::AbstractPermutation, range)
-    all(>(degree(σ)), range) && return [i for i in range]
+    all(>(degree(σ)), range) && return collect(range)
     return [i for i in range if i^σ == i]
 end
 
