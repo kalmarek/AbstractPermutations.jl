@@ -8,9 +8,9 @@ function __degree(images::AbstractVector{<:Integer})
     return zero(firstindex(images))
 end
 
-struct Perm{T<:Integer} <: AP.AbstractPermutation # change to mutable for cycles
+struct Perm{T<:Integer} <: AP.AbstractPermutation
     images::Vector{T}
-    # cycles::AP.CycleDecomposition{T} # to cache/compute on-demand
+
     function Perm{T}(
         images::AbstractVector{<:Integer},
         check::Bool = true,
@@ -20,8 +20,13 @@ struct Perm{T<:Integer} <: AP.AbstractPermutation # change to mutable for cycles
             throw(ArgumentError("images do not constitute a permutation!"))
         end
         deg = __degree(images)
-        # since we always take view Perm never takes the ownership of `images`
-        return new{T}(@view images[Base.OneTo(deg)])
+        # we take the ownership of `images`, when possible
+        if images isa Vector
+            images = resize!(images, deg)
+            return new{T}(images) # no copy
+        else # fallback, copies view into a new vector
+            return new{T}(@view images[Base.OneTo(deg)])
+        end
     end
 end
 
@@ -44,8 +49,17 @@ end
 @inline AP.__unsafe_image(n::Integer, σ::Perm) =
     oftype(n, @inbounds σ.images[n])
 
-# to make use of lazy-caching of cycle decomposition
+# to make use of lazy-caching of cycle decomposition the following pattern
+# could be used:
 #=
+mutable struct Perm{T<:Integer} <: AP.AbstractPermutation
+    images::Vector{T}
+    cycles::AP.CycleDecomposition{T}
+
+    # __same__ (hence incomplete) constructor as above
+
+end
+
 function AP.cycles(σ::Perm)
     if !isdefined(σ, :cycles)
         cdec = AP.CycleDecomposition(σ)
@@ -54,14 +68,14 @@ function AP.cycles(σ::Perm)
     return σ.cycles
 end
 
-function AP.parity(σ::Perm)
-    isdefined(σ, :cycles) && return AP.parity(AP.cycles(σ))
-    return AP.__parity_generic(σ)
+function AP.isodd(σ::Perm)
+    isdefined(σ, :cycles) && return AP.isodd(AP.cycles(σ))
+    return AP.__isodd(σ)
 end
 
 =#
 
 # some other performance overloads that are possible
 # Base.copy(σ::Perm) = Perm(copy(σ.images), false)
-# Base.broadcastable(σ::Perm) = Ref(σ)
+
 end # of module Perms
