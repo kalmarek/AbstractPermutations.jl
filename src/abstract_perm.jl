@@ -108,7 +108,7 @@ Return the underlying "storage" integer.
 !!! warn
     **For internal use only.**
 
-The intension is to provide optimal storage type when the `images` vector
+The intention is to provide optimal storage type when the `images` vector
 constructor is used (to save allocations and memory copy).
 For example a hypothetic permutation `Perm8` of elements up to length `255`
 may alter the default to `UInt8`.
