@@ -33,6 +33,7 @@ Subtypes `APerm <: AbstractPermutation` must implement the following functions:
 * [`perm(σ::APerm)`](@ref perm) by default returns `σ` - the "simplest"
   (implementation-wise) permutation underlying `σ`.
 * [`inttype(::Type{<:APerm})`](@ref inttype) by default returns `UInt32`.
+* [`__unsafe_image(i::Integer, σ::APerm)`](@ref __unsafe_image) defaults to `i^σ`.
 """
 abstract type AbstractPermutation <: GroupsCore.GroupElement end
 

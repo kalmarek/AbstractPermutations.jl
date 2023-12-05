@@ -106,16 +106,18 @@ Since in `APerm{T}` we store images as a `Vector{T}`, to avoid spurious
 allocations we may define
 
 ```julia
-AP.inttype(::Type{APerm{T}}) where T = T
+AbstractPermutations.inttype(::Type{APerm{T}}) where T = T
 ```
 
 There is no need to define `AbstractPermutations.perm` as `APerm` is already
 very low level and suitable for high performance code-paths.
 
-Finally to squeeze even more performance one could define `AP.__unsafe_image`
+Finally to squeeze even more performance one could define `__unsafe_image`
 with the same semantics as `n^σ` under the assumption that `n` belongs to
-`Base.OneTo(AP.degree(σ))`:
+`Base.OneTo(degree(σ))`:
 
 ```julia
-@inline AP.__unsafe_image(n::Integer, σ::APerm) = oftype(n, @inbounds σ.images[n])
+@inline function AbstractPermutations.__unsafe_image(n::Integer, σ::APerm)
+    return oftype(n, @inbounds σ.images[n])
+end
 ```
