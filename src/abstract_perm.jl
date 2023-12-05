@@ -146,16 +146,18 @@ Base.one(::Type{P}) where {P<:AbstractPermutation} = P(inttype(P)[], false)
 Base.one(σ::AbstractPermutation) = one(typeof(σ))
 Base.isone(σ::AbstractPermutation) = degree(σ) == 0
 
-function _deepcopy(p::AbstractPermutation)
+function _copy_by_images(p::AbstractPermutation)
     return typeof(p)(__images_vector(p), false)
 end
 
 function Base.deepcopy_internal(p::AbstractPermutation, stackdict::IdDict)
-    haskey(stackdict, p) && return stackdict[p]
-    return _deepcopy(p)
+    if !haskey(stackdict, p)
+        stackdict[p] = _copy_by_images(p)
+    end
+    return stackdict[p]
 end
 
-Base.copy(p::AbstractPermutation) = _deepcopy(p)
+Base.copy(p::AbstractPermutation) = _copy_by_images(p)
 
 function Base.:(==)(σ::AbstractPermutation, τ::AbstractPermutation)
     degree(σ) ≠ degree(τ) && return false
