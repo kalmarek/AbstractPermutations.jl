@@ -13,7 +13,7 @@ Subtypes `APerm <: AbstractPermutation` must implement the following functions:
   constitute a honest permutation.
 * [`Base.:^(i::Integer, σ::APerm)`](@ref ^(::Integer, ::AbstractPermutation))
   the customary notation for the image of `i` under `σ`.
-* [`degree(σ::APerm)`](@ref degree) the minimal `d ≥ 1` such that `σ` fixes all
+* [`degree(σ::APerm)`](@ref degree) the minimal `d ≥ 0` such that `σ` fixes all
   `k ≥ d`.
 
 !!! note
@@ -95,10 +95,12 @@ Return the "bare-metal" permutation (unwrap). Return `σ` by default.
 !!! warn
     **For internal use only.**
 
-Access to wrapped permutation object. For "bare-metal" permutations this needs
-to return the identical (i.e. ``===`) object. The intention of ths functions
-is to provide un-wrapped permutations to computationally intensive algorithms,
-so that the external wrappers (if exist) do not hinder the performance.
+Provide access to wrapped permutation object. For "bare-metal" permutations this
+method needs to return the identical (i.e. ``===`) object.
+
+The intention of this method is to provide an un-wrapped permutations to
+computationally intensive algorithms, so that the external wrappers (if present)
+do not hinder the performance.
 """
 perm(p::AbstractPermutation) = p
 
