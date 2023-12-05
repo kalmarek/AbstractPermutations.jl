@@ -13,11 +13,44 @@
     @test contains(sprint(show, MIME"text/plain"(), b * c), "(1,2,3)(4,5)")
 
     @testset "optimized definitions for *" begin
+        replstr(x) = sprint(
+            (io, x) -> show(
+                IOContext(io, :limit => true, :displaysize => (10, 80)),
+                MIME("text/plain"),
+                x,
+            ),
+            x,
+        )
+        showstr(x) = sprint(
+            (io, x) -> show(
+                IOContext(io, :limit => true, :displaysize => (10, 80)),
+                x,
+            ),
+            x,
+        )
+
+        showstr_nolimit(x) = sprint(
+            (io, x) -> show(IOContext(io, :displaysize => (10, 80)), x),
+            x,
+        )
+
         @testset "seed = $seed" for seed in [1, 2, 3, 4]
             Random.seed!(seed)
             p = EP.Perm(Random.randperm(64))
             q = EP.Perm(Random.randperm(128))
-            r = EP.Perm(Random.randperm(256))
+            r = EP.Perm(Random.randperm(1256))
+
+            @test replstr(r) isa String
+            @test contains(replstr(r), "[output truncated]")
+            @test contains(replstr(r), "…")
+
+            @test showstr(r) isa String
+            @test !contains(showstr(r), "[output truncated]")
+            @test contains(showstr(r), "…")
+
+            @test showstr_nolimit(r) isa String
+            @test !contains(showstr_nolimit(r), "[output truncated]")
+            @test !contains(showstr_nolimit(r), "…")
 
             @test p * q isa EP.Perm
             @test isperm((p * q).images)
