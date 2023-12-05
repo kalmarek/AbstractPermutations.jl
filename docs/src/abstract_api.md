@@ -36,6 +36,7 @@ overloaded by the implementer, if needed.
 ```@docs
 inttype
 perm
+__unsafe_image
 ```
 
 ## Example implementation
@@ -110,3 +111,11 @@ AP.inttype(::Type{APerm{T}}) where T = T
 
 There is no need to define `AbstractPermutations.perm` as `APerm` is already
 very low level and suitable for high performance code-paths.
+
+Finally to squeeze even more performance one could define `AP.__unsafe_image`
+with the same semantics as `n^σ` under the assumption that `n` belongs to
+`Base.OneTo(AP.degree(σ))`:
+
+```julia
+@inline AP.__unsafe_image(n::Integer, σ::APerm) = oftype(n, @inbounds σ.images[n])
+```
