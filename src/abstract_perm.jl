@@ -39,10 +39,10 @@ abstract type AbstractPermutation <: GroupsCore.GroupElement end
 
 """
     degree(σ::AbstractPermutation)
-Return a minimal number `n ≥ 0` such that `σ(k) == k` for all `k > n`.
+Return a minimal number `n ≥ 0` such that `k^σ == k` for all `k > n`.
 
 Such number `n` can be understood as a _degree_ of a permutation, since we can
-regard `σ` as an element of `Sym(1:n)` (and not of `Sym(1:n-1)`).
+regard `σ` as an element of `Sym(n)` (and not of `Sym(n-1)`).
 
 !!! note
     By this convention `degree` of the identity permutation is equal to `0`
