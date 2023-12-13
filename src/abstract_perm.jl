@@ -172,10 +172,8 @@ end
 
 function Base.hash(σ::AbstractPermutation, h::UInt)
     h = hash(AbstractPermutation, h)
-    let ^ = __unsafe_image
-        for i in Base.OneTo(degree(σ))
-            h = hash(i^σ, h)
-        end
+    h = let ^ = __unsafe_image
+        foldl((h, i) -> hash(i^σ, h), Base.OneTo(degree(σ)); init = h)
     end
     return h
 end
