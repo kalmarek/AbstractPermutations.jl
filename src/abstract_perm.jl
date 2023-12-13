@@ -154,11 +154,17 @@ Base.copy(p::AbstractPermutation) = _copy_by_images(p)
 
 function Base.:(==)(σ::AbstractPermutation, τ::AbstractPermutation)
     degree(σ) ≠ degree(τ) && return false
+    deg = degree(σ)
+    deg < 2 && return true
     let ^ = __unsafe_image
-        for i in Base.OneTo(degree(σ))
-            if i^σ != i^τ
-                return false
-            end
+        ans = true
+        k = ifelse(ispow2(deg), deg, prevpow(2, deg))
+        for i in Base.OneTo(k)
+            ans &= i^σ == i^τ
+        end
+        ans || return false
+        @simd for i in (k+1):degree(σ)
+            i^σ != i^τ && return false
         end
     end
     return true
