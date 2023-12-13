@@ -150,13 +150,6 @@ function _copy_by_images(p::AbstractPermutation)
     return typeof(p)(__images_vector(p), false)
 end
 
-function Base.deepcopy_internal(p::AbstractPermutation, stackdict::IdDict)
-    if !haskey(stackdict, p)
-        stackdict[p] = _copy_by_images(p)
-    end
-    return stackdict[p]
-end
-
 Base.copy(p::AbstractPermutation) = _copy_by_images(p)
 
 function Base.:(==)(σ::AbstractPermutation, τ::AbstractPermutation)
