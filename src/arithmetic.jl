@@ -123,3 +123,50 @@ function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
     P = typeof(σ)
     return P(img, false)
 end
+
+function Base.:^(σ::AbstractPermutation, n::Integer)
+    n < 0 && return inv(σ)^-n
+    if n == 0
+        return one(σ)
+    elseif n == 1
+        return copy(σ)
+    elseif n == 2
+        return σ * σ
+    elseif n == 3
+        return σ * σ * σ
+    elseif n == 4
+        σ² = σ * σ
+        return σ² * σ²
+    elseif n == 5
+        σ² = σ * σ
+        return σ² * σ² * σ
+    elseif n == 6
+        σ³ = σ * σ * σ
+        return σ³ * σ³
+    elseif n == 7
+        σ³ = σ * σ * σ
+        return σ³ * σ³ * σ
+    elseif n == 8
+        σ² = σ * σ
+        σ⁴ = σ² * σ²
+        return σ⁴ * σ⁴
+    elseif degree(σ) ≤ 64 || 2count_ones(n) > log2(degree(σ))
+        power_by_cycles(σ, n)
+    else
+        Base.power_by_squaring(σ, n)
+    end
+end
+
+function power_by_cycles(σ::AbstractPermutation, n::Integer)
+    img = Vector{inttype(σ)}(undef, degree(σ))
+    @inbounds for cycle in cycles(σ)
+        l = length(cycle)
+        k = n % l
+        for (idx, j) in enumerate(cycle)
+            idx += k
+            idx = ifelse(idx > l, idx - l, idx)
+            img[j] = cycle[idx]
+        end
+    end
+    return typeof(σ)(img, false)
+end
