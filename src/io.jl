@@ -22,10 +22,7 @@ function Base.show(io::IO, g::AbstractPermutation)
     return __print_perm(ioc, g)
 end
 
-function __print_perm(
-    io::IOContext,
-    p::AbstractPermutation;
-)
+function __print_perm(io::IOContext, p::AbstractPermutation;)
     available_width = get(io, :available_width, typemax(Int))
     limit = get(io, :limit, true)
     if !(get(io, :typeinfo, Nothing) <: AbstractPermutation || limit)
