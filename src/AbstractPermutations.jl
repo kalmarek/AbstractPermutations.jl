@@ -8,6 +8,7 @@ include("cycle_decomposition.jl")
 include("io.jl")
 include("arithmetic.jl")
 include("perm_functionality.jl")
+include("ordering.jl")
 include("parsing.jl")
 
 end

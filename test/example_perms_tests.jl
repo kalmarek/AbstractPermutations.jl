@@ -79,4 +79,33 @@
             end
         end
     end
+    @testset "ordering" begin
+        id = EP.Perm(Int[1]) # ()
+        a = EP.Perm([2, 1, 3]) # (1,2)
+        b = EP.Perm([2, 3, 1]) # (1,2,3)
+        c = EP.Perm([1, 2, 3, 5, 4]) # (4,5)
+
+        @test !(id < id)
+        @test id < a
+        @test id < b
+        @test id < c
+
+        @test a < b
+        @test b > a
+        @test c < a
+        @test c < b
+        @test !(c < c)
+
+        @test !Base.lt(AP.DegLex(), id, id)
+
+        @test Base.lt(AP.DegLex(), id, a)
+        @test Base.lt(AP.DegLex(), id, b)
+        @test Base.lt(AP.DegLex(), id, c)
+
+        @test Base.lt(AP.DegLex(), a, b)
+        @test !Base.lt(AP.DegLex(), b, a)
+        @test Base.lt(AP.DegLex(), a, c)
+        @test Base.lt(AP.DegLex(), b, c)
+        @test !Base.lt(AP.DegLex(), c, c)
+    end
 end
