@@ -157,7 +157,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test collect(AP.cycles(b * c)) == [[1, 2, 3], [4, 5]]
         end
 
-        @testset "io/show and parsing" begin
+        @testset "io/show, parsing and deepcopy" begin
             p = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
@@ -169,8 +169,16 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
 
             @test parse(P, "(1,3)(2,4,6)(3,5)") isa AP.AbstractPermutation
             @test parse(P, "(1,3)(2,4,6)(3,5)") == P([5, 4, 1, 6, 3, 2])
-            @test deepcopy(c) == c
-            @test deepcopy(c) !== c
+
+            x = [c, c]
+            @test x[1] === x[2]
+            y = deepcopy(x)
+            @test x == y
+            @test x !== y
+            @test y[1] === y[2]
+            if !isbitstype(P)
+                @test y[1] !== x[1]
+            end
         end
     end
 end

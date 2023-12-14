@@ -1,28 +1,31 @@
 # IO
 
 function Base.show(io::IO, ::MIME"text/plain", g::AbstractPermutation)
-    ioc = convert(IOContext, io)
     r, c = displaysize(io)
-    available_width = get(ioc, :limit, false) ? (r ÷ 2) * (c - 5) : typemax(Int)
-    k = __print_perm(ioc, g; available_width = available_width)
+    ioc = IOContext(
+        io,
+        :available_width =>
+            get(io, :limit, false) ? (r ÷ 2) * (c - 5) : typemax(Int),
+    )
+    k = __print_perm(ioc, g)
     if !iszero(k)
         print(ioc, '\n', lpad("[output truncated]", c - 5))
     end
 end
 
 function Base.show(io::IO, g::AbstractPermutation)
-    ioc = convert(IOContext, io)
-    r, c = displaysize(io)
-    available_width = get(ioc, :limit, false) ? c - 5 : typemax(Int)
-    return __print_perm(ioc, g; available_width = available_width)
+    _, c = displaysize(io)
+    ioc = IOContext(
+        io,
+        :available_width => get(io, :limit, false) ? c - 5 : typemax(Int),
+    )
+    return __print_perm(ioc, g)
 end
 
-function __print_perm(
-    io::IOContext,
-    p::AbstractPermutation;
-    available_width::Integer,
-)
-    if !(get(io, :typeinfo, Nothing) <: AbstractPermutation)
+function __print_perm(io::IOContext, p::AbstractPermutation;)
+    available_width = get(io, :available_width, typemax(Int))
+    limit = get(io, :limit, false)
+    if !(get(io, :typeinfo, Nothing) <: AbstractPermutation || limit)
         str = sprint(show, typeof(p))
         print(io, str, " ")
         available_width -= length(str) + 1

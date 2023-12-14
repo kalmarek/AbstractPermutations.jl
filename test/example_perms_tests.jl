@@ -70,6 +70,13 @@
 
             @test p * q * q * p == (p * q) * (q * p)
             @test p * q * r * p == (p * q) * (r * p)
+
+            c = AP.cycles(r)
+            if AP.order(c) == 11
+                @test r == r^12
+            else
+                @test r ≠ r^12
+            end
         end
     end
 end

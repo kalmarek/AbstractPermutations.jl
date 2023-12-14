@@ -93,6 +93,7 @@ function GroupsCore.order(::Type{T}, σ::AbstractPermutation) where {T}
     return GroupsCore.order(T, cycles(σ))
 end
 
+GroupsCore.order(cd::CycleDecomposition) = GroupsCore.order(BigInt, cd)
 function GroupsCore.order(::Type{T}, cd::CycleDecomposition) where {T}
     return convert(T, mapreduce(length, lcm, cd; init = 1))
 end
