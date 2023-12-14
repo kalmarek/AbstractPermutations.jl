@@ -24,7 +24,7 @@ end
 
 function __print_perm(io::IOContext, p::AbstractPermutation;)
     available_width = get(io, :available_width, typemax(Int))
-    limit = get(io, :limit, true)
+    limit = get(io, :limit, false)
     if !(get(io, :typeinfo, Nothing) <: AbstractPermutation || limit)
         str = sprint(show, typeof(p))
         print(io, str, " ")
