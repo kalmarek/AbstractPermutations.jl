@@ -52,7 +52,8 @@
     end
 
     @testset "optimized definitions for *" begin
-        @testset let seed = 1234
+        # let seed = 1234
+        @testset "$seed" for seed in (1234,)
             Random.seed!(seed)
             p = EP.Perm(Random.randperm(64))
             q = EP.Perm(Random.randperm(128))
