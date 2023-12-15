@@ -61,12 +61,12 @@ struct APerm{T} <: AbstractPermutations.AbstractPermutation
     images::Vector{T}
     degree::Int
 
-    function APerm{T}(v::AbstractVector{<:Integer}; check::Bool=true) where T
+    function APerm{T}(images::AbstractVector{<:Integer}; check::Bool=true) where T
         if check
-            isperm(v) || throw(ArgumentError("v is not a permutation"))
+            isperm(images) || throw(ArgumentError("`images` vector is not a permutation"))
         end
         deg = something(findlast(i->images[i] ≠ i, eachindex(images)), 0)
-        return new{T}(v, deg)
+        return new{T}(images, deg)
     end
 end
 nothing # hide
