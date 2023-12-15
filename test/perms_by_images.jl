@@ -36,18 +36,15 @@ function Base.:^(n::Integer, σ::Perm)
     return n in eachindex(σ.images) ? oftype(n, @inbounds σ.images[n]) : n
 end
 
-# this would be enough; for convienience we also define those
-
+# this would be enough; to squeeze more performance we also define:
 AP.inttype(::Type{Perm{T}}) where {T} = T
-AP.inttype(::Type{Perm}) = UInt16 # the default type when not specified
-
-function Perm(images::AbstractVector{<:Integer}, check = true)
-    return Perm{AP.inttype(Perm)}(images, check)
-end
-
-# we also define this function to squeeze more performance
 @inline AP.__unsafe_image(n::Integer, σ::Perm) =
     oftype(n, @inbounds σ.images[n])
+
+# this is only for our convienience, NOT REQUIRED
+function Perm(images::AbstractVector{<:Integer}; check = true)
+    return Perm{UInt16}(images; check = check)
+end
 
 # to make use of lazy-caching of cycle decomposition the following pattern
 # could be used:
@@ -77,5 +74,37 @@ end
 
 # some other performance overloads that are possible
 # Base.copy(σ::Perm) = Perm(copy(σ.images), false)
+
+struct CyclePerm{T} <: AP.AbstractPermutation
+    cycledec::AP.CycleDecomposition{T}
+end
+
+function CyclePerm{T}(
+    images::AbstractVector{<:Integer};
+    check::Bool = true,
+) where {T}
+    σ = Perm{T}(images; check = check) # being lazy
+    return CyclePerm(AP.CycleDecomposition(σ))
+end
+
+AP.degree(σ::CyclePerm) = length(σ.cycledec.cycles)
+
+function Base.:^(n::Integer, σ::CyclePerm)
+    cd = σ.cycledec
+    k = findfirst(==(n), cd.cycles)
+    isnothing(k) && return n
+    idx = searchsortedlast(cd.cycles_ptrs, k)
+    next = if cd.cycles_ptrs[idx+1] != k + 1
+        cd.cycles[k+1]
+    else
+        cd.cycles[cd.cycles_ptrs[idx]]
+    end
+    return oftype(n, next)
+end
+
+# this would be enough; for performance we also define those
+
+AP.inttype(::Type{<:CyclePerm{T}}) where {T} = T
+AP.cycles(σ::CyclePerm) = σ.cycledec
 
 end # of module Perms

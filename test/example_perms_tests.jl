@@ -1,5 +1,6 @@
 @testset "ExamplePerms" begin
-    abstract_perm_interface_test(EP.Perm)
+    abstract_perm_interface_test(EP.Perm{UInt16})
+    abstract_perm_interface_test(EP.CyclePerm{Int})
 
     @testset "io/show methods" begin
         id = EP.Perm(Int[1]) # ()

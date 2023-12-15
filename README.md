@@ -30,7 +30,7 @@ The packages following `AbstractPermutation` interface:
 
 ## Testing of the interface
 
-We provide test suite for the interface. An example implementation [`ExamplePerms.Perm`](https://github.com/kalmarek/AbstractPermutations.jl/blob/main/test/perms_by_images.jl) can be tested via the following.
+We provide test suite for the interface. Example implementations [`ExamplePerms.Perm`](https://github.com/kalmarek/AbstractPermutations.jl/blob/main/test/perms_by_images.jl) can be tested via the following.
 
 ```julia
 julia> using AbstractPermutations
@@ -43,7 +43,7 @@ Main.ExamplePerms
 
 julia> import .ExamplePerms
 
-julia> abstract_perm_interface_test(ExamplePerms.Perm);
+julia> abstract_perm_interface_test(ExamplePerms.Perm{UInt16});
 Test Summary:                                        | Pass  Total  Time
 AbstractPermutation API test: Main.ExamplePerms.Perm |   95     95  0.3s
 
