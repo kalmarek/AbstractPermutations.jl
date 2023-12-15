@@ -7,7 +7,7 @@ export APerm
 
 struct APerm <: AP.AbstractPermutation
     images::Vector{Int}
-    APerm(images, check::Bool = true) = new(images) # no checks :)
+    APerm(images; check::Bool = true) = new(images) # no checks :)
 end
 
 @testset "Implementing AbstractPermutation interface" begin

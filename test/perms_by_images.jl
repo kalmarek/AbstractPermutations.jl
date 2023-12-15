@@ -12,7 +12,7 @@ struct Perm{T<:Integer} <: AP.AbstractPermutation
     images::Vector{T}
 
     function Perm{T}(
-        images::AbstractVector{<:Integer},
+        images::AbstractVector{<:Integer};
         check::Bool = true,
     ) where {T}
         Base.require_one_based_indexing(images)

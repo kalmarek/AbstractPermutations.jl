@@ -6,7 +6,7 @@ function Base.inv(σ::AbstractPermutation)
             @inbounds img[k] = i
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
@@ -31,7 +31,7 @@ function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
             end
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(
@@ -97,7 +97,7 @@ function Base.:(*)(
             end
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(σ::AbstractPermutation, τs::AbstractPermutation...)
@@ -111,7 +111,7 @@ function Base.:(*)(σ::AbstractPermutation, τs::AbstractPermutation...)
         end
         @inbounds img[i] = j
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
@@ -121,7 +121,7 @@ function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
         img[i^τ] = (i^σ)^τ
     end
     P = typeof(σ)
-    return P(img, false)
+    return P(img; check = false)
 end
 
 function Base.:^(σ::AbstractPermutation, n::Integer)

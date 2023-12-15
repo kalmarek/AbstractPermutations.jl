@@ -7,8 +7,8 @@ their image under `σ`.
 
 # Mandatory interface
 Subtypes `APerm <: AbstractPermutation` must implement the following functions:
-* `APerm(images::AbstractVector{<:Integer}[, check::Bool=true])` - a
-  constructor of a `APerm` from a vector of images. Optionally the second
+* `APerm(images::AbstractVector{<:Integer}[; check::Bool=true])` - a
+  constructor of a `APerm` from a vector of images. Optionally the keyword
   argument `check` may be set to `false` when the caller knows that `images`
   constitute a honest permutation.
 * [`Base.:^(i::Integer, σ::APerm)`](@ref ^(::Integer, ::AbstractPermutation))
@@ -137,17 +137,19 @@ function Base.convert(
     ::Type{P},
     p::AbstractPermutation,
 ) where {P<:AbstractPermutation}
-    return P(__images_vector(p), false)
+    return P(__images_vector(p); check = false)
 end
 
 Base.convert(::Type{P}, p::P) where {P<:AbstractPermutation} = p
 
-Base.one(::Type{P}) where {P<:AbstractPermutation} = P(inttype(P)[], false)
+function Base.one(::Type{P}) where {P<:AbstractPermutation}
+    return P(inttype(P)[]; check = false)
+end
 Base.one(σ::AbstractPermutation) = one(typeof(σ))
 Base.isone(σ::AbstractPermutation) = degree(σ) == 0
 
 function _copy_by_images(p::AbstractPermutation)
-    return typeof(p)(__images_vector(p), false)
+    return typeof(p)(__images_vector(p); check = false)
 end
 
 Base.copy(p::AbstractPermutation) = _copy_by_images(p)

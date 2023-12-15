@@ -61,8 +61,8 @@ struct APerm{T} <: AbstractPermutations.AbstractPermutation
     images::Vector{T}
     degree::Int
 
-    function APerm{T}(v::AbstractVector{<:Integer}, validate::Bool=true) where T
-        if validate
+    function APerm{T}(v::AbstractVector{<:Integer}; check::Bool=true) where T
+        if check
             isperm(v) || throw(ArgumentError("v is not a permutation"))
         end
         return new{T}(v, __degree(v))
