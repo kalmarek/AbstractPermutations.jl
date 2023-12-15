@@ -16,7 +16,33 @@ function __unsafe_lex_compare(
     end
 end
 
+"""
+    Lex <: Base.Order.Ordering
+Lexicographical ordering of permutations.
+
+The comparison of permutations `σ` and `τ` in Lexicographical ordering returns
+`true` when there exists `k ≥ 1` such that
+* `i^σ == i^τ` for all `i < k` and
+* `k^σ < k^τ`
+and `false` otherwise.
+
+The method `isless(σ::AbstractPermutation, τ::AbstractPermutation)` defaults to
+the lexicographical order, i.e. calling `Base.lt(Lex(), σ, τ)`.
+
+See also [`DegLex`](@ref).
+"""
 struct Lex <: Base.Order.Ordering end
+
+"""
+    DegLex <: Base.Order.Ordering
+Degree-then-lexicographical ordering of permutations.
+
+The comparison of `σ` and `τ` is made by comparing [`degree`s](@ref degree)
+first, and by the [lexicographical ordering](@ref Lex) among permutations
+of the same `degree`.
+
+See also [`Lex`](@ref).
+"""
 struct DegLex <: Base.Order.Ordering end
 
 function Base.isless(p::AbstractPermutation, q::AbstractPermutation)
