@@ -85,6 +85,12 @@
             else
                 @test r ≠ r^12
             end
+
+            b = EP.Perm([2, 3, 1]) # (1,2,3)
+            c = EP.Perm([1, 2, 3, 5, 4]) # (4,5)
+
+            @test Set(AP.power_by_cycles(b * c, i) for i in -12:12) ==
+                  Set([(b * c)^i for i in 0:5])
         end
     end
     @testset "ordering" begin
