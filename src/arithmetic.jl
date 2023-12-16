@@ -6,7 +6,7 @@ function Base.inv(σ::AbstractPermutation)
             @inbounds img[k] = i
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
@@ -31,7 +31,7 @@ function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
             end
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(
@@ -97,7 +97,7 @@ function Base.:(*)(
             end
         end
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:(*)(σ::AbstractPermutation, τs::AbstractPermutation...)
@@ -111,7 +111,7 @@ function Base.:(*)(σ::AbstractPermutation, τs::AbstractPermutation...)
         end
         @inbounds img[i] = j
     end
-    return typeof(σ)(img, false)
+    return typeof(σ)(img; check = false)
 end
 
 function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
@@ -121,15 +121,18 @@ function Base.:^(σ::AbstractPermutation, τ::AbstractPermutation)
         img[i^τ] = (i^σ)^τ
     end
     P = typeof(σ)
-    return P(img, false)
+    return P(img; check = false)
 end
 
 function Base.:^(σ::AbstractPermutation, n::Integer)
-    n < 0 && return inv(σ)^-n
-    if n == 0
+    if n == 0 || isone(σ)
         return one(σ)
+    elseif n == -1
+        return inv(σ)
     elseif n == 1
         return copy(σ)
+    elseif n < 0
+        return inv(σ)^-n
     elseif n == 2
         return σ * σ
     elseif n == 3
@@ -158,15 +161,25 @@ function Base.:^(σ::AbstractPermutation, n::Integer)
 end
 
 function power_by_cycles(σ::AbstractPermutation, n::Integer)
-    img = Vector{inttype(σ)}(undef, degree(σ))
-    @inbounds for cycle in cycles(σ)
-        l = length(cycle)
-        k = n % l
-        for (idx, j) in enumerate(cycle)
-            idx += k
-            idx = ifelse(idx > l, idx - l, idx)
-            img[j] = cycle[idx]
+    if n == 0 || isone(σ)
+        return one(σ)
+    elseif n == -1
+        return inv(σ)
+    elseif n == 1
+        return copy(σ)
+    elseif n < 0
+        return power_by_cycles(inv(σ), -n)
+    else
+        img = Vector{inttype(σ)}(undef, degree(σ))
+        @inbounds for cycle in cycles(σ)
+            l = length(cycle)
+            k = n % l
+            for (idx, j) in enumerate(cycle)
+                idx += k
+                idx = ifelse(idx > l, idx - l, idx)
+                img[j] = cycle[idx]
+            end
         end
+        return typeof(σ)(img; check = false)
     end
-    return typeof(σ)(img, false)
 end

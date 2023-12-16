@@ -60,6 +60,7 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
         @testset "group arithmetic" begin
             a = P([2, 1, 3]) # (1,2)
             b = P([2, 3, 1]) # (1,2,3)
+            c = P([1, 2, 3, 5, 4]) # (4,5)
 
             @test a * b == P([3, 2, 1]) # (1,2)*(1,2,3) == (1,3)
             @test b * a == P([1, 3, 2]) # (1,2,3)*(1,2) == (2,3)
@@ -74,7 +75,8 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test b * b * a * a * b == one(b)
             @test b * b * b * b == b^4
 
-            @test Set(b^i for i in 1:10) == Set([b^i for i in 0:2])
+            @test Set((b * c)^i for i in -12:12) ==
+                  Set([(b * c)^i for i in 0:5])
         end
 
         @testset "actions on 1:n" begin

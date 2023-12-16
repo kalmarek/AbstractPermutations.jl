@@ -61,27 +61,19 @@ struct APerm{T} <: AbstractPermutations.AbstractPermutation
     images::Vector{T}
     degree::Int
 
-    function APerm{T}(v::AbstractVector{<:Integer}, validate::Bool=true) where T
-        if validate
-            isperm(v) || throw(ArgumentError("v is not a permutation"))
+    function APerm{T}(images::AbstractVector{<:Integer}; check::Bool=true) where T
+        if check
+            isperm(images) || throw(ArgumentError("`images` vector is not a permutation"))
         end
-        return new{T}(v, __degree(v))
+        deg = something(findlast(i->images[i] ≠ i, eachindex(images)), 0)
+        return new{T}(images, deg)
     end
 end
 nothing # hide
 ```
 
 Above we defined permutations by storing the vector of their images together
-with the computed degree.
-For completeness this `__degree` could be computed as
-
-```@example APerm
-function __degree(images::AbstractVector{<:Integer})
-    k = findlast(i->images[i] ≠ i, eachindex(images))
-    return something(k, 0)
-end
-nothing # hide
-```
+with the computed degree `deg`.
 
 Now we need to implement the remaining two functions which will be simple enough:
 

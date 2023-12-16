@@ -44,7 +44,7 @@ function Base.parse(
         end
         images[idx] = k
     end
-    return P(images)
+    return P(images; check = true)
 end
 
 """
