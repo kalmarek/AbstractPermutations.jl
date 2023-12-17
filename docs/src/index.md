@@ -21,3 +21,10 @@ _acts_ on ``\mathbb{N}``
 [**on the right**](https://en.wikipedia.org/wiki/Group_action#Right_group_action).
 
 For the description of the julia interface see the next section.
+
+## The packages following `AbstractPermutation` interface
+
+* [`PermutationGroups.jl`](https://github.com/kalmarek/PermutationGroups.jl)
+* [`PermGroups.jl`](https://github.com/jmichel7/PermGroups.jl/) (to be confirmed).
+
+> Note that [`Permutations.jl`](https://github.com/scheinerman/Permutations.jl) **do not** implement the `AbstractPermutations.jl` interface due to the fact that they act on integers **on the left**. See [these](https://github.com/scheinerman/Permutations.jl/issues/42#issuecomment-1826868005) [comments](https://github.com/scheinerman/Permutations.jl/issues/42#issuecomment-1830242636).
