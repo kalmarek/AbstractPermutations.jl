@@ -23,7 +23,7 @@ With implementing the interface one receives not only consistent arithmetic **ac
 
 The packages following `AbstractPermutation` interface:
 
-* [`PermutationGroups.jl`](https://github.com/kalmarek/PermutationGroups.jl) (work in progress)
+* [`PermutationGroups.jl`](https://github.com/kalmarek/PermutationGroups.jl)
 * [`PermGroups.jl`](https://github.com/jmichel7/PermGroups.jl/) (to be confirmed).
 
 > Note that [`Permutations.jl`](https://github.com/scheinerman/Permutations.jl) **do not** implement the `AbstractPermutations.jl` interface due to the fact that they act on integers **on the left**. See [these](https://github.com/scheinerman/Permutations.jl/issues/42#issuecomment-1826868005) [comments](https://github.com/scheinerman/Permutations.jl/issues/42#issuecomment-1830242636).
