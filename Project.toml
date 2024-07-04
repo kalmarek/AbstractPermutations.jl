@@ -1,7 +1,7 @@
 name = "AbstractPermutations"
 uuid = "36d08e8a-54dd-435f-8c9e-38a475050b11"
 authors = ["Marek Kaluba <kalmar@mailbox.org>"]
-version = "0.3"
+version = "0.3.1"
 
 [deps]
 GroupsCore = "d5909c97-4eac-4ecc-a3dc-fdd0858a4120"

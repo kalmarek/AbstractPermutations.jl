@@ -25,7 +25,9 @@ end
 function __print_perm(io::IOContext, p::AbstractPermutation;)
     available_width = get(io, :available_width, typemax(Int))
     limit = get(io, :limit, false)
-    if !(get(io, :typeinfo, Nothing) <: AbstractPermutation || limit)
+    compact = get(io, :compact, false)
+    if !(get(io, :typeinfo, Nothing) <: AbstractPermutation) &&
+       !(limit || compact)
         str = sprint(show, typeof(p))
         print(io, str, " ")
         available_width -= length(str) + 1

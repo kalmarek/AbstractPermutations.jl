@@ -8,12 +8,6 @@
         b = EP.Perm([2, 3, 1]) # (1,2,3)
         c = EP.Perm([1, 2, 3, 5, 4]) # (4,5)
 
-        @test contains(sprint(show, MIME"text/plain"(), id), "()")
-        @test contains(sprint(show, MIME"text/plain"(), a), "(1,2)")
-        @test contains(sprint(show, MIME"text/plain"(), b), "(1,2,3)")
-        @test contains(sprint(show, MIME"text/plain"(), c), "(4,5)")
-        @test contains(sprint(show, MIME"text/plain"(), b * c), "(1,2,3)(4,5)")
-
         replstr(x) = sprint(
             (io, x) -> show(
                 IOContext(io, :limit => true, :displaysize => (10, 80)),
@@ -34,6 +28,25 @@
             (io, x) -> show(IOContext(io, :displaysize => (10, 80)), x),
             x,
         )
+
+        tstr = "Main.ExamplePerms.Perm{UInt16}"
+        mime = MIME"text/plain"()
+        @test sprint(show, mime, id) == "$tstr ()"
+        @test sprint(show, mime, a) == "$tstr (1,2)"
+        @test sprint(show, mime, b) == "$tstr (1,2,3)"
+        @test sprint(show, mime, c) == "$tstr (4,5)"
+        @test sprint(show, mime, b * c) == "$tstr (1,2,3)(4,5)"
+
+        @test sprint((io, x) -> show(IOContext(io, :compact => true), x), id) ==
+              "()"
+        @test sprint((io, x) -> show(IOContext(io, :limit => true), x), id) ==
+              "()"
+
+        @test replstr(id) == "()"
+        @test replstr(a) == "(1,2)"
+        @test replstr(b) == "(1,2,3)"
+        @test replstr(c) == "(4,5)"
+        @test replstr(b * c) == "(1,2,3)(4,5)"
 
         p = EP.Perm(Random.randperm(64))
         q = EP.Perm(Random.randperm(128))
