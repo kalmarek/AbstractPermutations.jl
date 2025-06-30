@@ -69,7 +69,7 @@ end
 Applies permutation with cycle decomposition `cycledec` to array `v`.
 """
 Base.getindex(v::AbstractArray, cycledec::CycleDecomposition) =
-    vec(permute!(copy(v), cycledec))
+    permute!(copy(v), cycledec)
 
 """
     permute!(v::AbstractArray, cycledec::CycleDecomposition)

@@ -126,11 +126,10 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             M = randn(2, 3)
             for p in (id, a, b, c, d), arr in (v, M)
                 cycledec = AP.cycles(p)
-                image = (1:6) .^ p
+                image = reshape((1:6) .^ p, size(arr))
                 @test arr[p] == arr[image]
                 @test arr[cycledec] == arr[image]
-                @test permute!(copy(arr), cycledec) ==
-                      reshape(arr[image], size(arr))
+                @test permute!(copy(arr), cycledec) == arr[image]
             end
         end
 

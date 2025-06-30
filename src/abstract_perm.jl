@@ -202,7 +202,7 @@ function Base.getindex(v::AbstractArray, p::AbstractPermutation)
             ),
         )
     end
-    vp = similar(v, length(v))
+    vp = similar(v)
     @inbounds map!(i -> v[i^p], vp, Base.OneTo(degp))
     if degp < length(v)
         copyto!(vp, degp + 1, v, degp + 1, length(v) - degp)
