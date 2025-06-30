@@ -116,6 +116,24 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.fixedpoints(id, 5:7) == 5:7
         end
 
+        @testset "actions on arrays" begin
+            id = P([1]) # ()
+            a = P([2, 1, 3]) # (1,2)
+            b = P([2, 3, 1]) # (1,2,3)
+            c = P([1, 2, 3, 5, 4]) # (4,5)
+            d = P([1, 3, 2, 4, 6, 5]) # (2,3)(5,6)
+            v = randn(6)
+            M = randn(2, 3)
+            for p in (id, a, b, c, d), arr in (v, M)
+                cycledec = AP.cycles(p)
+                image = (1:6) .^ p
+                @test arr[p] == arr[image]
+                @test arr[cycledec] == arr[image]
+                @test permute!(copy(arr), cycledec) ==
+                      reshape(arr[image], size(arr))
+            end
+        end
+
         @testset "permutation functions" begin
             id = P([1]) # ()
             a = P([2, 1, 3]) # (1,2)
