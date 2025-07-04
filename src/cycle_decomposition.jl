@@ -78,7 +78,9 @@ end
     permute!(v::AbstractArray, cycledec::CycleDecomposition)
 Permute array `v` in-place, according to the permutation represented by `cycledec`.
 
-Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
+For the out-of-place version use `v[p]`.
+
+Permutations can be applied to any sufficiently long (`length(v) ≥ degree(p)`) `1`-based array.
 """
 function Base.permute!(v::AbstractArray, cycledec::CycleDecomposition)
     Base.require_one_based_indexing(v)

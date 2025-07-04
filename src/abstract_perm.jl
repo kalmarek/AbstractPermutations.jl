@@ -183,7 +183,7 @@ end
 Base.broadcastable(p::AbstractPermutation) = Ref(p)
 
 """
-    cycles(g::AbstractPermutation)
+    cycles(g::AbstractPermutation)::CycleDecomposition
 Return an iterator over cycles in the disjoint cycle decomposition of `g`.
 """
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
@@ -200,10 +200,12 @@ function Base.getindex(v::AbstractArray, p::AbstractPermutation)
 end
 
 """
-    permute!(dest::AbstractArray, v::AbstracArray, p::AbstractPermutation)
+    permute!(dest::AbstractArray, v::AbstractArray, p::AbstractPermutation)
 Permute array `v` in-place, storing the result in `dest`, according to permutation `p`.
 
-Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
+For the out-of-place version use `v[p]`.
+
+Permutations can be applied to any sufficiently long (`length(v) ≥ degree(p)`) `1`-based array.
 """
 function Base.permute!(
     dest::AbstractArray,
