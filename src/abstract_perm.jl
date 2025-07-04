@@ -195,6 +195,17 @@ Permute array `v`, according to permutation `p`.
 Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
 function Base.getindex(v::AbstractArray, p::AbstractPermutation)
+    vp = similar(v)
+    return permute!(vp, v, p)
+end
+
+"""
+    permute!(dest::AbstractArray, v::AbstracArray, p::AbstractPermutation)
+Permute array `v` in-place, storing the result in `dest`, according to permutation `p`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
+"""
+function Base.permute!(dest::AbstractArray, v::AbstractArray, p::AbstractPermutation)
     Base.require_one_based_indexing(v)
     degp = degree(p)
     if degp > length(v)
@@ -204,10 +215,9 @@ function Base.getindex(v::AbstractArray, p::AbstractPermutation)
             ),
         )
     end
-    vp = similar(v)
-    @inbounds map!(i -> v[i^p], vp, Base.OneTo(degp))
+    @inbounds map!(i -> v[i^p], dest, Base.OneTo(degp))
     if degp < length(v)
-        copyto!(vp, degp + 1, v, degp + 1, length(v) - degp)
+        copyto!(dest, degp + 1, v, degp + 1, length(v) - degp)
     end
-    return vp
+    return dest
 end
