@@ -70,8 +70,9 @@ Permute array `v`, according to the permutation represented by `cycledec`.
 
 Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
-Base.getindex(v::AbstractArray, cycledec::CycleDecomposition) =
-    permute!(copy(v), cycledec)
+function Base.getindex(v::AbstractArray, cycledec::CycleDecomposition)
+    return permute!(copy(v), cycledec)
+end
 
 """
     permute!(v::AbstractArray, cycledec::CycleDecomposition)
@@ -92,7 +93,7 @@ function Base.permute!(v::AbstractArray, cycledec::CycleDecomposition)
         length_c = length(c)
         @inbounds if length_c > 1
             temp = v[c[1]]
-            for i in 1:length_c-1
+            for i in 1:(length_c-1)
                 v[c[i]] = v[c[i+1]]
             end
             v[c[length_c]] = temp

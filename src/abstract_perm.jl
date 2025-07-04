@@ -205,7 +205,11 @@ Permute array `v` in-place, storing the result in `dest`, according to permutati
 
 Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
-function Base.permute!(dest::AbstractArray, v::AbstractArray, p::AbstractPermutation)
+function Base.permute!(
+    dest::AbstractArray,
+    v::AbstractArray,
+    p::AbstractPermutation,
+)
     Base.require_one_based_indexing(v)
     degp = degree(p)
     if degp > length(v)
