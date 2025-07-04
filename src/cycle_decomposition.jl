@@ -66,14 +66,18 @@ end
 
 """
     getindex(v::AbstractArray, cycledec::CycleDecomposition)
-Applies permutation with cycle decomposition `cycledec` to array `v`.
+Permute array `v`, according to the permutation represented by `cycledec`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
 Base.getindex(v::AbstractArray, cycledec::CycleDecomposition) =
     permute!(copy(v), cycledec)
 
 """
     permute!(v::AbstractArray, cycledec::CycleDecomposition)
-Applies permutation with cycle decomposition `cycledec` to array `v`, without allocating.
+Permute array `v` in-place, according to the permutation represented by `cycledec`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
 function Base.permute!(v::AbstractArray, cycledec::CycleDecomposition)
     Base.require_one_based_indexing(v)

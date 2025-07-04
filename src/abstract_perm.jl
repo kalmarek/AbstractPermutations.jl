@@ -190,7 +190,9 @@ cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
 
 """
     getindex(v::AbstracArray, p::AbstractPermutation)
-Applies permutation `p` to array `v`.
+Permute array `v`, according to permutation `p`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
 function Base.getindex(v::AbstractArray, p::AbstractPermutation)
     Base.require_one_based_indexing(v)
