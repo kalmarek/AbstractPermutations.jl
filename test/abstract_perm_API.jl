@@ -131,6 +131,8 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
                 @test arr[cycledec] == arr[image]
                 @test permute!(copy(arr), cycledec) == arr[image]
             end
+            @test_throws ArgumentError v[1:1][a]
+            @test_throws ArgumentError M[1:2, 1:2][AP.cycles(d)]
         end
 
         @testset "permutation functions" begin
