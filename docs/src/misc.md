@@ -10,6 +10,8 @@ iseven(::AbstractPermutation)
 sign(::AbstractPermutation)
 permtype
 cycles
+Base.permute!(::AbstractArray, ::AbstractArray, ::AbstractPermutation)
+Base.permute!(::AbstractArray, ::CycleDecomposition)
 Lex
 DegLex
 ```

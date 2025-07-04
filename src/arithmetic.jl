@@ -17,7 +17,7 @@ function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
                 k = (i^σ)^τ
                 @inbounds img[i] = k
             end
-            for i in degree(σ)+1:degree(τ)
+            for i in (degree(σ)+1):degree(τ)
                 k = i^τ
                 @inbounds img[i] = k
             end
@@ -48,11 +48,11 @@ function Base.:(*)(
                 k = ((i^σ)^τ)^ρ
                 @inbounds img[i] = k
             end
-            for i in degσ+1:degτ
+            for i in (degσ+1):degτ
                 k = (i^τ)^ρ
                 @inbounds img[i] = k
             end
-            for i in degτ+1:degρ
+            for i in (degτ+1):degρ
                 k = i^ρ
                 @inbounds img[i] = k
             end
@@ -80,7 +80,7 @@ function Base.:(*)(
                 k = k^ρ
                 @inbounds img[i] = k
             end
-            for i in degσ+1:degρ
+            for i in (degσ+1):degρ
                 k = i^ρ
                 @inbounds img[i] = k
             end

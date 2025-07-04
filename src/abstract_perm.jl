@@ -183,7 +183,47 @@ end
 Base.broadcastable(p::AbstractPermutation) = Ref(p)
 
 """
-    cycles(g::AbstractPermutation)
+    cycles(g::AbstractPermutation)::CycleDecomposition
 Return an iterator over cycles in the disjoint cycle decomposition of `g`.
 """
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
+
+"""
+    getindex(v::AbstracArray, p::AbstractPermutation)
+Permute array `v`, according to permutation `p`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
+"""
+function Base.getindex(v::AbstractArray, p::AbstractPermutation)
+    vp = similar(v)
+    return permute!(vp, v, p)
+end
+
+"""
+    permute!(dest::AbstractArray, v::AbstractArray, p::AbstractPermutation)
+Permute array `v` in-place, storing the result in `dest`, according to permutation `p`.
+
+For the out-of-place version use `v[p]`.
+
+Permutations can be applied to any sufficiently long (`length(v) ≥ degree(p)`) `1`-based array.
+"""
+function Base.permute!(
+    dest::AbstractArray,
+    v::AbstractArray,
+    p::AbstractPermutation,
+)
+    Base.require_one_based_indexing(v)
+    degp = degree(p)
+    if degp > length(v)
+        throw(
+            ArgumentError(
+                "Cannot permute: Permutation degree is larger than array length",
+            ),
+        )
+    end
+    @inbounds map!(i -> v[i^p], dest, Base.OneTo(degp))
+    if degp < length(v)
+        copyto!(dest, degp + 1, v, degp + 1, length(v) - degp)
+    end
+    return dest
+end

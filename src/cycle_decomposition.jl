@@ -3,6 +3,8 @@ struct CycleDecomposition{T<:Integer}
     cycles_ptrs::Vector{T} # pointers to the starts of the cycles
 end
 
+degree(cd::CycleDecomposition) = length(cd.cycles)
+
 Base.length(cd::CycleDecomposition) = length(cd.cycles_ptrs) - 1
 function Base.eltype(::Type{CycleDecomposition{T}}) where {T}
     return SubArray{T,1,Vector{T},Tuple{UnitRange{Int64}},true}
@@ -60,4 +62,44 @@ function CycleDecomposition(σ::AbstractPermutation)
     resize!(cycles, cidx)
     resize!(cyclesptr, cptr_idx)
     return CycleDecomposition{T}(cycles, cyclesptr)
+end
+
+"""
+    getindex(v::AbstractArray, cycledec::CycleDecomposition)
+Permute array `v`, according to the permutation represented by `cycledec`.
+
+Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
+"""
+function Base.getindex(v::AbstractArray, cycledec::CycleDecomposition)
+    return permute!(copy(v), cycledec)
+end
+
+"""
+    permute!(v::AbstractArray, cycledec::CycleDecomposition)
+Permute array `v` in-place, according to the permutation represented by `cycledec`.
+
+For the out-of-place version use `v[p]`.
+
+Permutations can be applied to any sufficiently long (`length(v) ≥ degree(p)`) `1`-based array.
+"""
+function Base.permute!(v::AbstractArray, cycledec::CycleDecomposition)
+    Base.require_one_based_indexing(v)
+    if degree(cycledec) > length(v)
+        throw(
+            ArgumentError(
+                "Cannot permute: Permutation degree is larger than array length",
+            ),
+        )
+    end
+    for c in cycledec
+        length_c = length(c)
+        @inbounds if length_c > 1
+            temp = v[c[1]]
+            for i in 1:(length_c-1)
+                v[c[i]] = v[c[i+1]]
+            end
+            v[c[length_c]] = temp
+        end
+    end
+    return v
 end

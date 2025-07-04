@@ -10,7 +10,7 @@ function _parse_cycles(str::AbstractString)
     for m in eachmatch(cycle_regex, str)
         cycle_str = m.match
         parsed_size += sizeof(cycle_str)
-        cycle = [parse(Int, a) for a in split(cycle_str[2:end-1], ",")]
+        cycle = [parse(Int, a) for a in split(cycle_str[2:(end-1)], ",")]
         push!(cycles, cycle)
     end
     if parsed_size != sizeof(str)

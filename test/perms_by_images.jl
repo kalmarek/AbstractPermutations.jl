@@ -41,7 +41,7 @@ AP.inttype(::Type{Perm{T}}) where {T} = T
 @inline AP.__unsafe_image(n::Integer, σ::Perm) =
     oftype(n, @inbounds σ.images[n])
 
-# this is only for our convienience, NOT REQUIRED
+# this is only for our convenience, NOT REQUIRED
 function Perm(images::AbstractVector{<:Integer}; check = true)
     return Perm{UInt16}(images; check = check)
 end
