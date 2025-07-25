@@ -69,10 +69,13 @@
         # let seed = 1234
         @testset "$seed" for seed in (1234,)
             Random.seed!(seed)
+            id = EP.Perm(Int[1])
             p = EP.Perm(Random.randperm(64))
             q = EP.Perm(Random.randperm(128))
             r = EP.Perm(Random.randperm(1256))
 
+            @test id * p == p
+            @test p * id == p
             @test p * q isa EP.Perm
             @test isperm((p * q).images)
             @test p * q == EP.Perm([(i^p)^q for i in 1:128])
