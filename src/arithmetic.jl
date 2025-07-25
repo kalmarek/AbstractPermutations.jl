@@ -10,6 +10,8 @@ function Base.inv(σ::AbstractPermutation)
 end
 
 function Base.:(*)(σ::AbstractPermutation, τ::AbstractPermutation)
+    isone(σ) && return copy(τ)
+    isone(τ) && return copy(σ)
     img = Vector{inttype(σ)}(undef, max(degree(σ), degree(τ)))
     let ^ = __unsafe_image
         if degree(σ) ≤ degree(τ)
