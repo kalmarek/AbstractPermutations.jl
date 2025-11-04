@@ -1,7 +1,14 @@
-struct CycleDecomposition{T<:Integer} <:
-       AbstractVector{SubArray{T,1,Vector{T},Tuple{UnitRange{Int64}},true}}
-    cycles::Vector{T} # cycles, concatenated
-    cycles_ptrs::Vector{T} # pointers to the starts of the cycles
+struct CycleDecomposition{T<:Integer,V<:AbstractVector{T}} <:
+       AbstractVector{SubArray{T,1,V,Tuple{UnitRange{Int64}},true}}
+    cycles::V # cycles, concatenated
+    cycles_ptrs::V # pointers to the starts of the cycles
+end
+
+function CycleDecomposition{T}(
+    cycles::V,
+    cycles_ptrs::V,
+) where {T<:Integer,V<:AbstractVector{T}}
+    return CycleDecomposition{T,V}(cycles, cycles_ptrs)
 end
 
 degree(cd::CycleDecomposition) = length(cd.cycles)
