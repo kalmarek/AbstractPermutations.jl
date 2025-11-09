@@ -172,10 +172,10 @@ function abstract_perm_interface_test(P::Type{<:AP.AbstractPermutation})
             @test AP.order(a * b) == 2
             @test AP.order(a * b * c) == 2
 
-            @test collect(AP.cycles(a)) == [[1, 2]]
-            @test collect(AP.cycles(b)) == [[1, 2, 3]]
-            @test collect(AP.cycles(a * b)) == [[1, 3], [2]]
-            @test collect(AP.cycles(b * c)) == [[1, 2, 3], [4, 5]]
+            @test AP.cycles(a) == [[1, 2]]
+            @test AP.cycles(b) == [[1, 2, 3]]
+            @test AP.cycles(a * b) == [[1, 3], [2]]
+            @test AP.cycles(b * c) == [[1, 2, 3], [4, 5]]
         end
 
         @testset "io/show, parsing and deepcopy" begin
