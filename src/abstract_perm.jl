@@ -183,7 +183,7 @@ end
 Base.broadcastable(p::AbstractPermutation) = Ref(p)
 
 """
-    cycles(g::AbstractPermutation)::CycleDecomposition
+    cycles(g::AbstractPermutation)::AbstractCycleDecomposition
 Return an iterator over cycles in the disjoint cycle decomposition of `g`.
 """
 cycles(σ::AbstractPermutation) = CycleDecomposition(σ)
