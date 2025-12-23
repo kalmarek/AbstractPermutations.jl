@@ -5,7 +5,10 @@ Return `true` if g is an odd permutation and `false` otherwise.
 An odd permutation decomposes into an odd number of transpositions.
 """
 Base.isodd(σ::AbstractPermutation) = __isodd(σ)
-Base.isodd(cd::CycleDecomposition) = isodd(count(iseven ∘ length, cd))
+
+function Base.isodd(cd::CycleDecomposition)
+    return iseven(length(cd.cycles) + length(cd.cycles_ptrs))
+end
 
 """
     isodd(g::AbstractPermutation) -> Bool
