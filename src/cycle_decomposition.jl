@@ -1,5 +1,10 @@
-struct CycleDecomposition{T<:Integer} <:
-       AbstractVector{SubArray{T,1,Vector{T},Tuple{UnitRange{Int64}},true}}
+abstract type AbstractCycleDecomposition{T<:Integer,V<:AbstractVector{T}} <:
+              AbstractVector{V} end
+
+struct CycleDecomposition{T<:Integer} <: AbstractCycleDecomposition{
+    T,
+    SubArray{T,1,Vector{T},Tuple{UnitRange{Int64}},true},
+}
     cycles::Vector{T} # cycles, concatenated
     cycles_ptrs::Vector{T} # pointers to the starts of the cycles
 end
@@ -8,7 +13,7 @@ degree(cd::CycleDecomposition) = length(cd.cycles)
 
 Base.size(cd::CycleDecomposition) = (length(cd.cycles_ptrs) - 1,)
 
-Base.IndexStyle(::Type{<:CycleDecomposition}) = IndexLinear()
+Base.IndexStyle(::Type{<:AbstractCycleDecomposition}) = IndexLinear()
 
 @inline function Base.getindex(cd::CycleDecomposition, i::Int)
     @boundscheck checkbounds(cd, i)
@@ -17,7 +22,7 @@ Base.IndexStyle(::Type{<:CycleDecomposition}) = IndexLinear()
     return @inbounds @view(cd.cycles[from:to])
 end
 
-function Base.show(io::IO, cd::CycleDecomposition)
+function Base.show(io::IO, cd::AbstractCycleDecomposition)
     print(io, "Cycle Decomposition: ")
     for c in cd
         print(io, '(')
@@ -65,24 +70,24 @@ function CycleDecomposition(σ::AbstractPermutation)
 end
 
 """
-    getindex(v::AbstractArray, cycledec::CycleDecomposition)
+    getindex(v::AbstractArray, cycledec::AbstractCycleDecomposition)
 Permute array `v`, according to the permutation represented by `cycledec`.
 
 Permutations can be applied to any `1`-based array such that that `length(v) ≥ degree(p)`.
 """
-function Base.getindex(v::AbstractArray, cycledec::CycleDecomposition)
+function Base.getindex(v::AbstractArray, cycledec::AbstractCycleDecomposition)
     return permute!(copy(v), cycledec)
 end
 
 """
-    permute!(v::AbstractArray, cycledec::CycleDecomposition)
+    permute!(v::AbstractArray, cycledec::AbstractCycleDecomposition)
 Permute array `v` in-place, according to the permutation represented by `cycledec`.
 
 For the out-of-place version use `v[p]`.
 
 Permutations can be applied to any sufficiently long (`length(v) ≥ degree(p)`) `1`-based array.
 """
-function Base.permute!(v::AbstractArray, cycledec::CycleDecomposition)
+function Base.permute!(v::AbstractArray, cycledec::AbstractCycleDecomposition)
     Base.require_one_based_indexing(v)
     if degree(cycledec) > length(v)
         throw(

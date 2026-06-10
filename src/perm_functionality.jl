@@ -5,7 +5,7 @@ Return `true` if g is an odd permutation and `false` otherwise.
 An odd permutation decomposes into an odd number of transpositions.
 """
 Base.isodd(σ::AbstractPermutation) = __isodd(σ)
-Base.isodd(cd::CycleDecomposition) = isodd(count(iseven ∘ length, cd))
+Base.isodd(cd::AbstractCycleDecomposition) = isodd(count(iseven ∘ length, cd))
 
 """
     isodd(g::AbstractPermutation) -> Bool
@@ -14,7 +14,7 @@ Return `true` if g is an even permutation and `false` otherwise.
 An even permutation decomposes into an even number of transpositions.
 """
 Base.iseven(σ::AbstractPermutation) = !isodd(σ)
-Base.iseven(cd::CycleDecomposition) = !isodd(cd)
+Base.iseven(cd::AbstractCycleDecomposition) = !isodd(cd)
 
 function __isodd(σ::AbstractPermutation)
     to_visit = trues(degree(σ))
@@ -93,7 +93,7 @@ function GroupsCore.order(::Type{T}, σ::AbstractPermutation) where {T}
     return GroupsCore.order(T, cycles(σ))
 end
 
-GroupsCore.order(cd::CycleDecomposition) = GroupsCore.order(BigInt, cd)
-function GroupsCore.order(::Type{T}, cd::CycleDecomposition) where {T}
+GroupsCore.order(cd::AbstractCycleDecomposition) = GroupsCore.order(BigInt, cd)
+function GroupsCore.order(::Type{T}, cd::AbstractCycleDecomposition) where {T}
     return convert(T, mapreduce(length, lcm, cd; init = 1))
 end
